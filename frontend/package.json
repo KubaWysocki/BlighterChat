@@ -1,0 +1,62 @@
+{
+  "name": "blighter-chat-app",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/react": "^11.2.0",
+    "@testing-library/user-event": "^12.2.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.0",
+    "web-vitals": "^0.2.4"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "indent": ["error", 2],
+      "linebreak-style": "error",
+      "quotes": ["error", "single"],
+      "prefer-template": "warn",
+      "semi": ["error", "never"],
+      "no-console": "warn",
+      "no-extra-parens": "error", 
+      "no-multi-spaces": "error",
+      "no-trailing-spaces": "error",
+      "space-before-function-paren": ["error", "never"],
+      "space-before-blocks": ["error", "always"],
+      "space-in-parens": ["error", "never"],
+      "array-bracket-spacing": ["error", "never"],
+      "block-spacing": "error",
+      "comma-spacing": "error",
+      "computed-property-spacing": ["error", "never"],
+      "func-call-spacing": "error",
+      "rest-spread-spacing": "error",
+      "arrow-spacing": "error",
+      "object-curly-spacing": "error",
+      "eol-last": ["error", "never"],
+      "lines-between-class-members": "error"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

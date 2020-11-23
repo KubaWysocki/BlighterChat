@@ -1,0 +1,55 @@
+{
+  "name": "blighter-chat-api",
+  "version": "0.1.0",
+  "main": "app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "nodemon --exec 'npm run lint && node' -L app.js -e js,ejs",
+    "lint": "./node_modules/.bin/eslint --fix ./",
+    "mysql": "sudo /etc/init.d/mysql",
+    "mongo": "sudo service mongodb"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.3",
+    "eslint": "^7.14.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "commonjs": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {
+      "indent": ["error", 2],
+      "linebreak-style": "error",
+      "quotes": ["error", "single"],
+      "prefer-template": "warn",
+      "semi": ["error", "never"],
+      "no-console": "warn",
+      "no-extra-parens": "error", 
+      "no-multi-spaces": "error",
+      "no-trailing-spaces": "error",
+      "no-unused-vars": "warn",
+      "space-before-function-paren": ["error", "never"],
+      "space-before-blocks": ["error", "always"],
+      "space-in-parens": ["error", "never"],
+      "array-bracket-spacing": ["error", "never"],
+      "block-spacing": "error",
+      "comma-spacing": "error",
+      "computed-property-spacing": ["error", "never"],
+      "func-call-spacing": "error",
+      "rest-spread-spacing": "error",
+      "arrow-spacing": "error",
+      "object-curly-spacing": "error",
+      "eol-last": ["error", "never"],
+      "lines-between-class-members": "error"
+    }
+  }
+}
