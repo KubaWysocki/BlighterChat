@@ -6,12 +6,12 @@
   "scripts": {
     "start": "nodemon --exec 'npm run lint && node' -L app.js -e js,ejs",
     "lint": "./node_modules/.bin/eslint --fix ./",
-    "mysql": "sudo /etc/init.d/mysql",
     "mongo": "sudo service mongodb"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.10.15"
   },
   "devDependencies": {
     "nodemon": "^1.18.3",
@@ -33,7 +33,7 @@
       "prefer-template": "warn",
       "semi": ["error", "never"],
       "no-console": "warn",
-      "no-extra-parens": "error", 
+      "no-extra-parens": "error",
       "no-multi-spaces": "error",
       "no-trailing-spaces": "error",
       "no-unused-vars": "warn",

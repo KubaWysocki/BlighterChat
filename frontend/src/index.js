@@ -1,12 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
+import {BrowserRouter as Router} from 'react-router-dom'
+import {CssBaseline, StylesProvider} from '@material-ui/core'
+
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <StylesProvider injectFirst>
+      <CssBaseline/>
+      <Router>
+        <App/>
+      </Router>
+    </StylesProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

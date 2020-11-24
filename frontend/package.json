@@ -8,11 +8,14 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.0",
     "@testing-library/user-event": "^12.2.2",
+    "node-sass": "4.14.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "web-vitals": "^0.2.4"
   },
@@ -29,9 +32,10 @@
       "prefer-template": "warn",
       "semi": ["error", "never"],
       "no-console": "warn",
-      "no-extra-parens": "error", 
+      "no-extra-parens": "error",
       "no-multi-spaces": "error",
       "no-trailing-spaces": "error",
+      "no-unused-vars": "warn",
       "space-before-function-paren": ["error", "never"],
       "space-before-blocks": ["error", "always"],
       "space-in-parens": ["error", "never"],
