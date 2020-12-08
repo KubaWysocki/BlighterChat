@@ -2,10 +2,10 @@ const express = require('express')
 require('express-async-errors')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 const {MONGO_DB_URI} = require('./util/constants')
 
-const setHeaders = require('./middleware/setHeaders')
 const isAuth = require('./middleware/isAuth')
 const errorHandler = require('./middleware/errorHandler')
 
@@ -17,7 +17,7 @@ const app = express()
 
 app.use(bodyParser.json())
 
-app.use(setHeaders)
+app.use(cors())
 
 app.use(authRoutes)
 

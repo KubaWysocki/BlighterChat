@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const {JWT_SECRET_KEY} = require('../util/constants')
 
-exports.signup = async(req, res, next) => {
+exports.signup = async(req, res) => {
   const {email, username, password} = req.body
   const users = await User.find({$or: [{email}, {username}]}).exec()
   if (users.length) {
@@ -22,7 +22,7 @@ exports.signup = async(req, res, next) => {
   }
 }
 
-exports.login = async(req, res, next) => {
+exports.login = async(req, res) => {
   const {username, password} = req.body
   const user = await User.findOne({username}, 'username password')
   if (!user) {
