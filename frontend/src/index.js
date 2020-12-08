@@ -1,18 +1,28 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {BrowserRouter as Router} from 'react-router-dom'
-import {CssBaseline, StylesProvider} from '@material-ui/core'
+import {createMuiTheme, ThemeProvider, StylesProvider, CssBaseline} from '@material-ui/core'
 
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
+import './index.scss'
+
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark'
+  }
+})
+
 ReactDOM.render(
   <React.StrictMode>
     <StylesProvider injectFirst>
-      <CssBaseline/>
-      <Router>
-        <App/>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline/>
+        <Router>
+          <App/>
+        </Router>
+      </ThemeProvider>
     </StylesProvider>
   </React.StrictMode>,
   document.getElementById('root')
