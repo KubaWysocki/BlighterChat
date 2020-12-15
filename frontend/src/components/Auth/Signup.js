@@ -72,7 +72,7 @@ const Signup = (props) => {
         validate: value => value === watch('password') || 'Passwords must match'
       })}
     />
-    <SubmitButton/>
+    <SubmitButton isSignup/>
   </Box>
 }
 

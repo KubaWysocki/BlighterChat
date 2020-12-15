@@ -50,27 +50,26 @@ function App() {
       })
   }, [history, setUser])
 
+  if (loading) return <Spinner/>
+
   return (
     <Switch>
-      {!loading
-        ? <UserContext.Provider value={userContext}>
-          <Route render={({location}) =>
-            [urls.SLASH, urls.UNAUTHENTICATED].includes(location.pathname)
-              ? null
-              : <Navigation/>
-          }/>
-          <Route path={urls.UNAUTHENTICATED}>
-            <Auth/>
-          </Route>
-          <Route path={urls.PROFILE}>
-            <Profile/>
-          </Route>
-          <Route path={urls.FRIENDS}>
-            <Friends/>
-          </Route>
-        </UserContext.Provider>
-        : <Spinner/>
-      }
+      <UserContext.Provider value={userContext}>
+        <Route render={({location}) =>
+          [urls.SLASH, urls.UNAUTHENTICATED].includes(location.pathname)
+            ? null
+            : <Navigation/>
+        }/>
+        <Route path={urls.UNAUTHENTICATED}>
+          <Auth/>
+        </Route>
+        <Route path={urls.PROFILE}>
+          <Profile/>
+        </Route>
+        <Route path={urls.FRIENDS}>
+          <Friends/>
+        </Route>
+      </UserContext.Provider>
     </Switch>
   )
 }

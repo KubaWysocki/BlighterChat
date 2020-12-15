@@ -5,6 +5,7 @@ import {useHistory} from 'react-router-dom'
 
 import axios from '../../util/axios'
 import * as urls from '../../util/urls'
+import * as api from '../../util/api'
 import SubmitButton from './SubmitButton'
 import * as validators from '../../util/validators'
 import UserContext from '../../util/UserContext'
@@ -19,7 +20,7 @@ const Login = (props) => {
   const usedErrors = props.errors || errors
 
   const handleLogin = async(data) => {
-    axios.post('/login', data)
+    axios.post(api.LOGIN, data)
       .then(res => {
         const {token, ...userData} = res.data
         localStorage.setItem('token', token)
