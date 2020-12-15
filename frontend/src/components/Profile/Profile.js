@@ -1,27 +1,59 @@
 import {useContext, useEffect, useState} from 'react'
-import {Avatar, Box, Button, CircularProgress, Typography} from '@material-ui/core'
+import {Avatar, Box, Button, Typography} from '@material-ui/core'
 import {useRouteMatch} from 'react-router-dom'
-
-import axios from '../../util/axios'
-import UserContext from '../../util/UserContext'
+import {Done} from '@material-ui/icons'
 
 import * as api from '../../util/api'
+import axios from '../../util/axios'
+import UserContext from '../../util/UserContext'
+import Spinner from '../Spinner/Spinner'
 
-const Profile = (props) => {
+const Profile = () => {
   const [user] = useContext(UserContext)
   const [profile, setProfile] = useState(null)
-  const {params} = useRouteMatch('/profile/:username')
+  const {params} = useRouteMatch('/profile/:username?/:id?')
 
   useEffect(() => {
-    if (params.username !== user.username) {
-      axios.get(`${api.GET_USER}/${params.username}`)
+    if (!params.username || !params.id) {
+      return
+    }
+    else if (params.username === user.username && Number(params.id) === user.id) {
+      setProfile(user)
+    }
+    else {
+      axios.get(`${api.GET_PROFILE}/${params.username}/${params.id}`)
         .then(res => setProfile(res.data))
         .catch(err => {
-          console.log({...err})
+          console.log({...err}) //404
         })
     }
-    else setProfile(user)
-  }, [user, params.username])
+  }, [user, params.id, params.username])
+
+  const handleAddFriend = () => {
+
+  }
+
+  const handleSendFriendRequest = () => {
+    axios.put(api.SEND_FRIEND_REQUEST, {_id: profile._id})
+      .then(res => setProfile({...profile, ...res.data}))
+  }
+
+  let action = null
+  if (user === profile) {
+    action = <Typography variant='overline'>Your Profile</Typography>
+  }
+  else if (profile?.isFriend) {
+    action = <Button>Message</Button>
+  }
+  else if (profile?.didUserSendFriendRequest) {
+    action = <Button onClick={handleAddFriend}>Accept Friend</Button>
+  }
+  else if (!profile?.isFriendRequestSent) {
+    action = <Button onClick={handleSendFriendRequest}>Add to friends</Button>
+  }
+  else if (profile.isFriendRequestSent) {
+    action = <Typography><Done/>Friend request sent</Typography>
+  }
 
   return <Box
     width={1}
@@ -32,14 +64,14 @@ const Profile = (props) => {
     flexDirection='column'
   >
     {!profile
-      ? <CircularProgress/>
+      ? <Spinner/>
       : <>
-        <Avatar src={profile.images?.[0]}>{profile.username?.[0]}</Avatar>
+        <Box component={Avatar} width={100} height={100} fontSize={40}>
+          {profile.username[0]}
+        </Box>
         <Typography variant='h3'>{profile.username}</Typography>
         <Typography variant='h5'>{profile.email}</Typography>
-        {user === profile &&
-          <Button>Edit</Button>
-        }
+        {action}
       </>
     }
   </Box>

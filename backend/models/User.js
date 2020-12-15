@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const AutoIncrement = require('mongoose-sequence')(mongoose)
 
 const {modelNames} = require('../util/constants')
 
@@ -18,12 +19,25 @@ const userSchema = new Schema({
     required: true,
     select: false
   },
+  friendRequests: [{
+    type: Schema.Types.ObjectId, ref: modelNames.USER
+  }],
+  friends: [{
+    type: Schema.Types.ObjectId, ref: modelNames.USER
+  }],
   chats: [{
     type: Schema.Types.ObjectId, ref: modelNames.CHAT
-  }]
+  }],
+  lastActivity: {
+    type: Date,
+    required: true
+  }
 })
 
-userSchema.methods.addToCart = function() {
+userSchema.plugin(AutoIncrement, {id: 'username_seq', inc_field: 'id', reference_fields: ['username']})
+
+
+userSchema.methods.addFriend = function() {
 
 }
 

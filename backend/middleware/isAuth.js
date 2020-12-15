@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 
 const {JWT_SECRET_KEY} = require('../util/constants')
 
-module.exports = (req, res, next) => {
+module.exports = async(req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1]
   let decodedToken
   try {
@@ -13,6 +14,6 @@ module.exports = (req, res, next) => {
     throw error
   }
   if (!decodedToken) throw {status: 401, message: 'Not authenticated'}
-  req.userId = decodedToken.userId
+  req.user = await User.findById(decodedToken._id)
   next()
 }

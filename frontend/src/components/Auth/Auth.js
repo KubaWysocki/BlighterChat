@@ -1,11 +1,13 @@
 import {useState} from 'react'
+import {useLocation} from 'react-router-dom'
 import {Tabs, Tab, Box} from '@material-ui/core'
 
 import Login from './Login'
 import Signup from './Signup'
 
 const Signin = (props) => {
-  const [activeTab, setActiveTab] = useState(0)
+  const {search} = useLocation()
+  const [activeTab, setActiveTab] = useState(search === '?new' ? 1 : 0)
 
   const tabs = [<Login/>, <Signup/>]
 

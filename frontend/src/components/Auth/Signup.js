@@ -1,23 +1,34 @@
+import {useContext} from 'react'
 import {TextField, Box} from '@material-ui/core'
 import {useForm} from 'react-hook-form'
 import {useHistory} from 'react-router-dom'
-
-import axios from '../../util/axios'
-import Login from './Login'
-import SubmitButton from './SubmitButton'
 
 import * as urls from '../../util/urls'
 import * as api from '../../util/api'
 import * as validators from '../../util/validators'
 
+import UserContext from '../../util/UserContext'
+import axios from '../../util/axios'
+import Login from './Login'
+import SubmitButton from './SubmitButton'
+
 const Signup = (props) => {
   const {register, watch, errors, setError, handleSubmit} = useForm()
   const history = useHistory()
+  const setUser = useContext(UserContext)[1]
 
   const handleSignup = (data) => {
     axios.put(api.NEW_USER, data)
       .then((res) => {
-        history.push(urls.PROFILE + res.data.username)
+        const {token, ...userData} = res.data
+        localStorage.setItem('token', token)
+        Object.assign(axios.defaults, {
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        })
+        setUser(userData)
+        history.push(`${urls.PROFILE + userData.username}/${userData.id}`)
       })
       .catch(error => {
         const errors = error.response.data
@@ -36,14 +47,14 @@ const Signup = (props) => {
   >
     <TextField
       autoFocus
-      name='email'
-      type='email'
-      label='Email'
+      name='username'
+      type='username'
+      label='Username'
       margin='normal'
-      placeholder='example@domain.com'
-      error={!!errors.email}
-      helperText={errors.email?.message}
-      inputRef={register(validators.email)}
+      placeholder='example_user'
+      error={!!errors.username}
+      helperText={errors.username?.message}
+      inputRef={register(validators.username)}
     />
     <Login
       register={register}
