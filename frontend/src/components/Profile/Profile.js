@@ -11,23 +11,23 @@ import Spinner from '../Spinner/Spinner'
 const Profile = () => {
   const [user] = useContext(UserContext)
   const [profile, setProfile] = useState(null)
-  const {params} = useRouteMatch('/profile/:username?/:id?')
+  const {params} = useRouteMatch('/profile/:slug?')
 
   useEffect(() => {
-    if (!params.username || !params.id) {
+    if (!params.slug) {
       return
     }
-    else if (params.username === user.username && Number(params.id) === user.id) {
+    else if (params.slug === user.slug) {
       setProfile(user)
     }
     else {
-      axios.get(`${api.GET_PROFILE}/${params.username}/${params.id}`)
+      axios.get(api.GET_PROFILE + params.slug)
         .then(res => setProfile(res.data))
         .catch(err => {
           console.log({...err}) //404
         })
     }
-  }, [user, params.id, params.username])
+  }, [user, params.slug])
 
   const handleAddFriend = () => {
 

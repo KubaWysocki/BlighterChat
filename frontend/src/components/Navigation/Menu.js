@@ -4,11 +4,11 @@ import {Avatar, Box, Menu, MenuItem} from '@material-ui/core'
 import {AccountBox, Group, ExitToApp} from '@material-ui/icons'
 
 import * as urls from '../../util/urls'
-
+import {LOGGED_OUT} from '../../util/constants'
 import UserContext from '../../util/UserContext'
 import axios from '../../util/axios'
 
-const AppMenu = (props) => {
+const AppMenu = () => {
   const [user, setUser] = useContext(UserContext)
   const history = useHistory()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -16,7 +16,7 @@ const AppMenu = (props) => {
   const handleCloseMenu = () => setAnchorEl(null)
 
   const handleProfile = () => {
-    history.push(`${urls.PROFILE + user.username}/${user.id}`)
+    history.push(urls.PROFILE + user.slug)
     handleCloseMenu()
   }
 
@@ -26,8 +26,8 @@ const AppMenu = (props) => {
   }
 
   const handleLogout = () => {
-    localStorage.setItem('token', 'loggedOut')
-    setUser({})
+    localStorage.setItem('token', LOGGED_OUT)
+    setUser(null)
     Object.assign(axios.defaults, {
       headers: {
         authorization: null

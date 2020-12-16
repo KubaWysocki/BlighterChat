@@ -45,20 +45,19 @@ const SearchList = ({search, onClear}) => {
       {isSearching
         ? <Spinner/>
         : users.length
-          ? users.map(user => {
-            const userPath = `${urls.PROFILE + user.username}/${user.id}`
-            return <Box
+          ? users.map(user =>
+            <Box
               button
               width={1}
               component={ListItem}
-              key={userPath}
-              onClick={() => handleItemClick(userPath)}>
+              key={user.slug}
+              onClick={() => handleItemClick(urls.PROFILE + user.slug)}>
               <ListItemAvatar>
                 <Box component={Avatar} height={35} width={35}>{user.username[0]}</Box>
               </ListItemAvatar>
               {user.username}
             </Box>
-          })
+          )
           : <Typography variant='body2' align='center'>Users not found</Typography>
       }
     </List>

@@ -28,10 +28,10 @@ const Signup = (props) => {
           }
         })
         setUser(userData)
-        history.push(`${urls.PROFILE + userData.username}/${userData.id}`)
+        history.push(urls.PROFILE + userData.slug)
       })
       .catch(error => {
-        const errors = error.response.data
+        const errors = error.response.data.message
         for (const key in errors) {
           setError(key, {type: 'manual', message: errors[key]})
         }

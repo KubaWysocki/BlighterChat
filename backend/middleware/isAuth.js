@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
+const ApiError = require('../util/ApiError')
 
 const {JWT_SECRET_KEY} = require('../util/constants')
 
@@ -13,7 +14,7 @@ module.exports = async(req, res, next) => {
     error.status = 500
     throw error
   }
-  if (!decodedToken) throw {status: 401, message: 'Not authenticated'}
+  if (!decodedToken) throw new ApiError(401, 'Not authenticated')
   req.user = await User.findById(decodedToken._id)
   next()
 }

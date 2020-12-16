@@ -5,7 +5,7 @@ import {Tabs, Tab, Box} from '@material-ui/core'
 import Login from './Login'
 import Signup from './Signup'
 
-const Signin = (props) => {
+const Signin = () => {
   const {search} = useLocation()
   const [activeTab, setActiveTab] = useState(search === '?new' ? 1 : 0)
 
@@ -17,8 +17,7 @@ const Signin = (props) => {
       textColor='primary'
       centered
       value={activeTab}
-      onChange={(e, value) => setActiveTab(value)}
-    >
+      onChange={(e, value) => setActiveTab(value)}>
       <Tab label='Login'/>
       <Tab label='Signup'/>
     </Tabs>

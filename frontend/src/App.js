@@ -4,6 +4,7 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 import axios from './util/axios'
 import * as urls from './util/urls'
 import * as api from './util/api'
+import {LOGGED_OUT} from './util/constants'
 import UserContext from './util/UserContext'
 
 import Auth from './components/Auth/Auth'
@@ -13,7 +14,7 @@ import Spinner from './components/Spinner/Spinner'
 import Friends from './components/Friends/Friends'
 
 function App() {
-  const userContext = useState({})
+  const userContext = useState(null)
   const setUser = userContext[1]
   const [loading, setLoading] = useState(true)
   const history = useHistory()
@@ -24,7 +25,7 @@ function App() {
       history.push(`${urls.UNAUTHENTICATED}?new`)
       return setLoading(false)
     }
-    if (token === 'loggedOut') {
+    if (token === LOGGED_OUT) {
       history.push(`${urls.UNAUTHENTICATED}?known`)
       return setLoading(false)
     }

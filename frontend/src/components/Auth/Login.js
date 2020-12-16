@@ -33,7 +33,7 @@ const Login = (props) => {
         history.push(urls.FEED)
       })
       .catch(error => {
-        const errors = error.response.data
+        const errors = error.response.data.message
         for (const key in errors) {
           setError(key, {type: 'manual', message: errors[key]})
         }

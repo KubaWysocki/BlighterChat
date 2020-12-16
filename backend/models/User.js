@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const AutoIncrement = require('mongoose-sequence')(mongoose)
+const URLSlugs = require('mongoose-url-slugs')
 
 const {modelNames} = require('../util/constants')
 
@@ -34,7 +34,7 @@ const userSchema = new Schema({
   }
 })
 
-userSchema.plugin(AutoIncrement, {id: 'username_seq', inc_field: 'id', reference_fields: ['username']})
+userSchema.plugin(URLSlugs('username'))
 
 
 userSchema.methods.addFriend = function() {

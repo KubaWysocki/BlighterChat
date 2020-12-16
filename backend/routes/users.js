@@ -4,7 +4,7 @@ const usersController = require('../controllers/users')
 
 const router = express.Router()
 
-router.get('/profile/:username/:id', usersController.getProfile)
+router.get('/profile/:slug', usersController.getProfile)
 
 router.get('/users', usersController.getUsers)
 
