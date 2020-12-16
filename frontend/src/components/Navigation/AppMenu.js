@@ -1,17 +1,30 @@
-import {useContext, useState} from 'react'
+import {useContext, useState, useEffect} from 'react'
 import {useHistory} from 'react-router-dom'
-import {Avatar, Box, Menu, MenuItem} from '@material-ui/core'
+import {Avatar, Badge, Box, Menu, MenuItem} from '@material-ui/core'
 import {AccountBox, Group, ExitToApp} from '@material-ui/icons'
 
+import axios from '../../util/axios'
+import socket from '../../util/socket'
+import * as api from '../../util/api'
 import * as urls from '../../util/urls'
 import {LOGGED_OUT} from '../../util/constants'
 import UserContext from '../../util/UserContext'
-import axios from '../../util/axios'
 
-const AppMenu = () => {
+const AppMenu = (props) => {
   const [user, setUser] = useContext(UserContext)
   const history = useHistory()
   const [anchorEl, setAnchorEl] = useState(null)
+  const [friendRequestsNum, setFriendRequestsNum] = useState(0)
+
+  useEffect(() => {
+    axios.get(api.FRIEND_REQUESTS_NUMBER)
+      .then(res => {
+        setFriendRequestsNum(res.data.friendRequests)
+        socket.get().on('new-friend-request', data => {
+          setFriendRequestsNum(data.friendRequests)
+        })
+      })
+  }, [])
 
   const handleCloseMenu = () => setAnchorEl(null)
 
@@ -37,10 +50,21 @@ const AppMenu = () => {
   }
 
   return <Box ml={1.5}>
-    <Avatar src={null}
-      onClick={(e) => setAnchorEl(e.currentTarget)}>
-      {user.username[0]}
-    </Avatar>
+    <Badge
+      invisible={!!anchorEl || friendRequestsNum === 0}
+      badgeContent={friendRequestsNum}
+      color='primary'
+      overlap='circle'
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'left',
+      }}>
+      <Avatar
+        src={null}
+        onClick={(e) => setAnchorEl(e.currentTarget)}>
+        {user.username[0]}
+      </Avatar>
+    </Badge>
     <Menu
       anchorEl={anchorEl}
       keepMounted
@@ -55,13 +79,22 @@ const AppMenu = () => {
         vertical: 'top',
         horizontal: 'right',
       }}>
-      <MenuItem dense onClick={handleProfile}>
+      <MenuItem onClick={handleProfile}>
         <AccountBox/>&nbsp; Profile
       </MenuItem>
-      <MenuItem dense onClick={handleFriends}>
-        <Group/>&nbsp; Friends
+      <MenuItem onClick={handleFriends}>
+        <Badge
+          badgeContent={friendRequestsNum}
+          color='primary'
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}>
+          <Group/>
+        </Badge>
+        &nbsp; Friends
       </MenuItem>
-      <MenuItem dense onClick={handleLogout}>
+      <MenuItem onClick={handleLogout}>
         <ExitToApp/>&nbsp; Logout
       </MenuItem>
     </Menu>

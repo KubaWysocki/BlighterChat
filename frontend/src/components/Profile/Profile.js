@@ -7,6 +7,7 @@ import * as api from '../../util/api'
 import axios from '../../util/axios'
 import UserContext from '../../util/UserContext'
 import Spinner from '../Spinner/Spinner'
+import socket from '../../util/socket'
 
 const Profile = () => {
   const [user] = useContext(UserContext)
@@ -35,7 +36,9 @@ const Profile = () => {
 
   const handleSendFriendRequest = () => {
     axios.put(api.SEND_FRIEND_REQUEST, {_id: profile._id})
-      .then(res => setProfile({...profile, ...res.data}))
+      .then(res => {
+        setProfile({...profile, ...res.data})
+      })
   }
 
   let action = null

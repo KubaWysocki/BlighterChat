@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const ApiError = require('../util/ApiError')
+const ioInstance = require('../util/socket')
 
 exports.getProfile = async(req, res) => {
   const {slug} = req.params
@@ -42,5 +43,17 @@ exports.sendFriendRequest = async(req, res) => {
   newFriend.friendRequests.push(req.user._id)
   await newFriend.save()
 
+  let requestedUserConnection = ioInstance.connected.find(con => String(con.userId) === String(newFriend._id))
+  if (requestedUserConnection) {
+    ioInstance.get().to(requestedUserConnection.socketId)
+      .emit('new-friend-request', {
+        friendRequests: newFriend.friendRequests.length
+      })
+  }
+
   return res.status(200).json({isFriendRequestSent: true})
+}
+
+exports.getFriendRequestsNumber = async(req, res) => {
+  return res.status(200).json({friendRequests: req.user.friendRequests.length})
 }

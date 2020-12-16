@@ -7,8 +7,9 @@ import * as urls from '../../util/urls'
 import * as api from '../../util/api'
 import * as validators from '../../util/validators'
 
-import UserContext from '../../util/UserContext'
 import axios from '../../util/axios'
+import socket from '../../util/socket'
+import UserContext from '../../util/UserContext'
 import Login from './Login'
 import SubmitButton from './SubmitButton'
 
@@ -28,6 +29,7 @@ const Signup = (props) => {
           }
         })
         setUser(userData)
+        socket.init({token})
         history.push(urls.PROFILE + userData.slug)
       })
       .catch(error => {

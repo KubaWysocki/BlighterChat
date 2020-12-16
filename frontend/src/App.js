@@ -6,6 +6,7 @@ import * as urls from './util/urls'
 import * as api from './util/api'
 import {LOGGED_OUT} from './util/constants'
 import UserContext from './util/UserContext'
+import socket from './util/socket'
 
 import Auth from './components/Auth/Auth'
 import Profile from './components/Profile/Profile'
@@ -40,6 +41,7 @@ function App() {
         })
         setUser(userData)
         setLoading(false)
+        socket.init({token})
         if(history.location.pathname === urls.SLASH ||
           history.location.pathname.includes(urls.UNAUTHENTICATED)) {
           history.push(urls.FEED)

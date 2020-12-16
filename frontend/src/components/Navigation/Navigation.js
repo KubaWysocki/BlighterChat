@@ -2,7 +2,7 @@ import {useState} from 'react'
 import {AppBar, TextField, InputAdornment, Toolbar} from '@material-ui/core'
 import {Search} from '@material-ui/icons'
 
-import AppMenu from './Menu'
+import AppMenu from './AppMenu'
 import SearchList from './SearchList'
 
 
@@ -24,7 +24,7 @@ const Navigation = () => {
             </InputAdornment>
           }}
         />
-        <AppMenu/>
+        <AppMenu friendRequests/>
       </Toolbar>
     </AppBar>
     {search &&
