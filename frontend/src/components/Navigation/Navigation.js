@@ -9,6 +9,8 @@ import SearchList from './SearchList'
 const Navigation = () => {
   const [search, setSearch] = useState('')
 
+  const handleClear = () => setSearch('')
+
   return <>
     <AppBar color='transparent'>
       <Toolbar variant='dense'>
@@ -24,11 +26,11 @@ const Navigation = () => {
             </InputAdornment>
           }}
         />
-        <AppMenu friendRequests/>
+        <AppMenu onClear={handleClear}/>
       </Toolbar>
     </AppBar>
     {search &&
-      <SearchList search={search} onClear={() => setSearch('')}/>
+      <SearchList search={search} onClear={handleClear}/>
     }
   </>
 }

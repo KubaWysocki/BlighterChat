@@ -1,18 +1,16 @@
 import {useState, useEffect} from 'react'
-import {useHistory} from 'react-router-dom'
-import {Paper, Box, List, ListItem, ListItemAvatar, Typography, Avatar} from '@material-ui/core'
+import {Paper, Box, List, ListItem, Typography} from '@material-ui/core'
 
 import * as api from '../../util/api'
-import * as urls from '../../util/urls'
 import axios from '../../util/axios'
 import useDebounce from '../../Hooks/useDebounce'
 import Spinner from '../Spinner/Spinner'
+import UserListItem from '../UserListItem/UserListItem'
 
 const SearchList = ({search, onClear}) => {
   const [users, setUsers] = useState([])
   const [isSearching, setIsSearching] = useState(true)
   const debouncedSearch = useDebounce(search, 1000)
-  const history = useHistory()
 
   useEffect(() => {
     setIsSearching(true)
@@ -26,18 +24,14 @@ const SearchList = ({search, onClear}) => {
       })
   }, [debouncedSearch])
 
-  const handleItemClick = (userPath) => {
-    history.push(userPath)
-    onClear()
-  }
-
   return <Box
     component={Paper}
     width={1}
     mt={6}
     position='absolute'
     display='flex'
-    flexDirection='column'>
+    flexDirection='column'
+    zIndex='tooltip'>
     <List dense>
       <Box component={ListItem}>
         <Typography variant='subtitle1'>Users:</Typography>
@@ -46,17 +40,7 @@ const SearchList = ({search, onClear}) => {
         ? <Spinner/>
         : users.length
           ? users.map(user =>
-            <Box
-              button
-              width={1}
-              component={ListItem}
-              key={user.slug}
-              onClick={() => handleItemClick(urls.PROFILE + user.slug)}>
-              <ListItemAvatar>
-                <Box component={Avatar} height={35} width={35}>{user.username[0]}</Box>
-              </ListItemAvatar>
-              {user.username}
-            </Box>
+            <UserListItem user={user} onClick={onClear}/>
           )
           : <Typography variant='body2' align='center'>Users not found</Typography>
       }

@@ -9,7 +9,7 @@ function createToken(_id) {
   return jwt.sign(
     {_id},
     JWT_SECRET_KEY,
-    {expiresIn: '48h'}
+    {expiresIn: '48h'},
   )
 }
 
@@ -24,10 +24,9 @@ exports.signup = async(req, res) => {
     email,
     username,
     password: hashedPassword,
-    lastActivity: Date.now()
   }).save()
   const token = createToken(user._id.toString())
-  return res.status(200).json({token, email, username, slug: user.slug})
+  res.status(200).json({token, email, username, slug: user.slug})
 }
 
 exports.login = async(req, res) => {
@@ -40,15 +39,11 @@ exports.login = async(req, res) => {
   if (!passwordMatch) throw new ApiError(401, {password: 'Invalid password'})
 
   const token = createToken(user._id.toString())
-  user.lastActivity = Date.now()
-  user.save()
-  return res.status(200).json({token, email, username: user.username, slug: user.slug})
+  res.status(200).json({token, email, username: user.username, slug: user.slug})
 }
 
 exports.autoLogin = async(req, res) => {
   const token = createToken(req.user._id.toString())
-  req.user.lastActivity = Date.now()
-  req.user.save()
   const {email, username, slug} = req.user
-  return res.status(200).json({token, email, username, slug})
+  res.status(200).json({token, email, username, slug})
 }

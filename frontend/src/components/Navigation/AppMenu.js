@@ -10,7 +10,7 @@ import * as urls from '../../util/urls'
 import {LOGGED_OUT} from '../../util/constants'
 import UserContext from '../../util/UserContext'
 
-const AppMenu = (props) => {
+const AppMenu = ({onClear}) => {
   const [user, setUser] = useContext(UserContext)
   const history = useHistory()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -20,11 +20,16 @@ const AppMenu = (props) => {
     axios.get(api.FRIEND_REQUESTS_NUMBER)
       .then(res => {
         setFriendRequestsNum(res.data.friendRequests)
-        socket.get().on('new-friend-request', data => {
+        socket.get().on('friend-request', data => {
           setFriendRequestsNum(data.friendRequests)
         })
       })
   }, [])
+
+  const handleOpenMenu = (e) => {
+    onClear()
+    setAnchorEl(e.currentTarget)
+  }
 
   const handleCloseMenu = () => setAnchorEl(null)
 
@@ -53,7 +58,7 @@ const AppMenu = (props) => {
     <Badge
       invisible={!!anchorEl || friendRequestsNum === 0}
       badgeContent={friendRequestsNum}
-      color='primary'
+      color='secondary'
       overlap='circle'
       anchorOrigin={{
         vertical: 'top',
@@ -61,7 +66,7 @@ const AppMenu = (props) => {
       }}>
       <Avatar
         src={null}
-        onClick={(e) => setAnchorEl(e.currentTarget)}>
+        onClick={handleOpenMenu}>
         {user.username[0]}
       </Avatar>
     </Badge>
@@ -85,7 +90,7 @@ const AppMenu = (props) => {
       <MenuItem onClick={handleFriends}>
         <Badge
           badgeContent={friendRequestsNum}
-          color='primary'
+          color='secondary'
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'left',

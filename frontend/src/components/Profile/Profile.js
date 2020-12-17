@@ -7,7 +7,6 @@ import * as api from '../../util/api'
 import axios from '../../util/axios'
 import UserContext from '../../util/UserContext'
 import Spinner from '../Spinner/Spinner'
-import socket from '../../util/socket'
 
 const Profile = () => {
   const [user] = useContext(UserContext)
@@ -24,21 +23,22 @@ const Profile = () => {
     else {
       axios.get(api.GET_PROFILE + params.slug)
         .then(res => setProfile(res.data))
-        .catch(err => {
-          console.log({...err}) //404
-        })
     }
   }, [user, params.slug])
 
-  const handleAddFriend = () => {
-
+  const handleSendFriendRequest = () => {
+    axios.put(api.SEND_FRIEND_REQUEST, {slug: params.slug})
+      .then(res => setProfile({...profile, ...res.data}))
   }
 
-  const handleSendFriendRequest = () => {
-    axios.put(api.SEND_FRIEND_REQUEST, {_id: profile._id})
-      .then(res => {
-        setProfile({...profile, ...res.data})
-      })
+  const handleAddFriend = (e) => {
+    axios.put(api.ADD_FRIEND, {slug: params.slug})
+      .then(res => setProfile(res.data))
+  }
+
+  const handleRejectFriend = (e) => {
+    axios.delete(api.REJECT_FRIEND_REQUEST + params.slug)
+      .then(res => setProfile({...profile, ...res.data}))
   }
 
   let action = null
@@ -49,13 +49,16 @@ const Profile = () => {
     action = <Button>Message</Button>
   }
   else if (profile?.didUserSendFriendRequest) {
-    action = <Button onClick={handleAddFriend}>Accept Friend</Button>
+    action = <>
+      <Button onClick={handleAddFriend} color='primary'>Accept Friend</Button>
+      <Button onClick={handleRejectFriend}>Reject Friend</Button>
+    </>
+  }
+  else if (profile?.isFriendRequestSent) {
+    action = <Typography><Done/>Friend request sent</Typography>
   }
   else if (!profile?.isFriendRequestSent) {
-    action = <Button onClick={handleSendFriendRequest}>Add to friends</Button>
-  }
-  else if (profile.isFriendRequestSent) {
-    action = <Typography><Done/>Friend request sent</Typography>
+    action = <Button color='primary' onClick={handleSendFriendRequest}>Send Invitation</Button>
   }
 
   return <Box
@@ -64,8 +67,7 @@ const Profile = () => {
     display='flex'
     justifyContent='center'
     alignItems='center'
-    flexDirection='column'
-  >
+    flexDirection='column'>
     {!profile
       ? <Spinner/>
       : <>

@@ -11,7 +11,8 @@ const isAuth = require('./middleware/isAuth')
 const errorHandler = require('./middleware/errorHandler')
 
 const authRoutes = require('./routes/auth')
-const usersRoutes = require('./routes/users')
+const userRoutes = require('./routes/user')
+const userSetRoutes = require('./routes/usersSet')
 
 
 const app = express()
@@ -24,7 +25,8 @@ app.use(authRoutes)
 
 app.use(isAuth)
 
-app.use(usersRoutes)
+app.use(userRoutes)
+app.use(userSetRoutes)
 
 app.use(errorHandler)
 
@@ -32,14 +34,13 @@ mongoose.connect(MONGO_DB_URI, {useNewUrlParser: true, useUnifiedTopology: true}
   .then(() => {
     console.log('running!!') //eslint-disable-line
     const server = app.listen(8000)
-    const ioInstance = require('./util/socket')
-    const io = ioInstance.init(server)
+    const io = require('./util/socket').init(server)
     io.on('connection', socket => {
       const {_id} = decodeToken(socket.request._query.token)
-      ioInstance.connected.push({userId: _id, socketId: socket.id})
+      socket.userId = _id
     })
     io.on('disconnect', socket => {
-      ioInstance.connected = ioInstance.connected.filter(con => con.socketId !== socket.id)
+      socket.userId = null
     })
   })
   .catch(err => {

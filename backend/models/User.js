@@ -20,7 +20,8 @@ const userSchema = new Schema({
     select: false
   },
   friendRequests: [{
-    type: Schema.Types.ObjectId, ref: modelNames.USER
+    notify: Boolean,
+    user: {type: Schema.Types.ObjectId, ref: modelNames.USER}
   }],
   friends: [{
     type: Schema.Types.ObjectId, ref: modelNames.USER
@@ -28,17 +29,15 @@ const userSchema = new Schema({
   chats: [{
     type: Schema.Types.ObjectId, ref: modelNames.CHAT
   }],
-  lastActivity: {
-    type: Date,
-    required: true
-  }
 })
 
 userSchema.plugin(URLSlugs('username'))
 
-
-userSchema.methods.addFriend = function() {
-
+userSchema.methods.getFriendRequests = function() {
+  return this.execPopulate({
+    path: 'friendRequests.user',
+    select: '-_id -__v -friendRequests -friends -chats'
+  })
 }
 
 module.exports = mongoose.model(modelNames.USER, userSchema)
