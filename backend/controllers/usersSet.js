@@ -21,9 +21,7 @@ exports.getFriendRequests = async(req, res) => {
 
   ioInstance.getActiveConnection(req.user, (io, connection) => {
     io.to(connection)
-      .emit('friend-request', {
-        friendRequests: 0
-      })
+      .emit('friend-request', {friendRequests: 0})
   })
 
   const requestsList = req.user.friendRequests.map(fr => fr.user)
@@ -31,9 +29,16 @@ exports.getFriendRequests = async(req, res) => {
 }
 
 exports.getFriends = async(req, res) => {
+  const {search} = req.query
   await req.user.execPopulate({
     path: 'friends',
-    select: '-__v -_id -friends -friendRequests -chats'
+    select: '-__v -_id -friends -friendRequests -chats',
+    match: {
+      username: {
+        $regex: search || '',
+        $options: 'i'
+      }
+    }
   })
   res.status(200).json(req.user.friends)
 }

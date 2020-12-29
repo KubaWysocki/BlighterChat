@@ -7,7 +7,7 @@ import axios from '../../util/axios'
 import socket from '../../util/socket'
 import * as urls from '../../util/urls'
 import * as api from '../../util/api'
-import UserContext from '../../util/UserContext'
+import UserContext from '../../contexts/UserContext'
 import SubmitButton from './SubmitButton'
 import * as validators from '../../util/validators'
 

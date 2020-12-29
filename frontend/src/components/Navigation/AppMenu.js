@@ -8,7 +8,7 @@ import socket from '../../util/socket'
 import * as api from '../../util/api'
 import * as urls from '../../util/urls'
 import {LOGGED_OUT} from '../../util/constants'
-import UserContext from '../../util/UserContext'
+import UserContext from '../../contexts/UserContext'
 
 const AppMenu = ({onClear}) => {
   const [user, setUser] = useContext(UserContext)

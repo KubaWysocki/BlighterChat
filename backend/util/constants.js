@@ -3,5 +3,6 @@ exports.JWT_SECRET_KEY = 'encryptionKeyUsedToEncryptTokenHere'
 
 exports.modelNames = {
   USER: 'User',
-  CHAT: 'Chat'
+  CHAT: 'Chat',
+  MESSAGE: 'Message'
 }

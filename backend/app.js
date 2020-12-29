@@ -5,7 +5,8 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 
 const {MONGO_DB_URI} = require('./util/constants')
-const decodeToken = require('./util/decodeToken')
+
+const io = require('./util/socket')
 
 const isAuth = require('./middleware/isAuth')
 const errorHandler = require('./middleware/errorHandler')
@@ -13,6 +14,7 @@ const errorHandler = require('./middleware/errorHandler')
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
 const userSetRoutes = require('./routes/usersSet')
+const chatRoutes = require('./routes/chats')
 
 
 const app = express()
@@ -28,20 +30,15 @@ app.use(isAuth)
 app.use(userRoutes)
 app.use(userSetRoutes)
 
+app.use(chatRoutes)
+
 app.use(errorHandler)
 
 mongoose.connect(MONGO_DB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
     console.log('running!!') //eslint-disable-line
     const server = app.listen(8000)
-    const io = require('./util/socket').init(server)
-    io.on('connection', socket => {
-      const {_id} = decodeToken(socket.request._query.token)
-      socket.userId = _id
-    })
-    io.on('disconnect', socket => {
-      socket.userId = null
-    })
+    io.init(server)
   })
   .catch(err => {
     console.log(err) //eslint-disable-line

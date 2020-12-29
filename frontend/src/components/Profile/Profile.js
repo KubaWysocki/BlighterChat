@@ -1,21 +1,24 @@
 import {useContext, useEffect, useState} from 'react'
 import {Avatar, Box, Button, Typography} from '@material-ui/core'
-import {useRouteMatch} from 'react-router-dom'
+import {useHistory, useRouteMatch} from 'react-router-dom'
 import {Done} from '@material-ui/icons'
 
 import * as api from '../../util/api'
+import * as urls from '../../util/urls'
 import axios from '../../util/axios'
-import UserContext from '../../util/UserContext'
+import UserContext from '../../contexts/UserContext'
 import Spinner from '../Spinner/Spinner'
 
 const Profile = () => {
+  const history = useHistory()
+  const {params} = useRouteMatch('/profile/:slug?')
+
   const [user] = useContext(UserContext)
   const [profile, setProfile] = useState(null)
-  const {params} = useRouteMatch('/profile/:slug?')
 
   useEffect(() => {
     if (!params.slug) {
-      return
+      return //redirect to 404 page
     }
     else if (params.slug === user.slug) {
       setProfile(user)
@@ -26,9 +29,13 @@ const Profile = () => {
     }
   }, [user, params.slug])
 
-  const handleSendFriendRequest = () => {
-    axios.put(api.SEND_FRIEND_REQUEST, {slug: params.slug})
-      .then(res => setProfile({...profile, ...res.data}))
+  const handleSendMessage = () => {
+    history.push(`${urls.CHAT}?receiver=${params.slug}`, {username: profile.username})
+  }
+
+  const handleDeleteFriend = () => {
+    axios.delete(api.REMOVE_FRIEND + params.slug)
+      .then(() => history.push(urls.FEED))
   }
 
   const handleAddFriend = (e) => {
@@ -36,8 +43,13 @@ const Profile = () => {
       .then(res => setProfile(res.data))
   }
 
-  const handleRejectFriend = (e) => {
+  const handleRejectFriend = () => {
     axios.delete(api.REJECT_FRIEND_REQUEST + params.slug)
+      .then(res => setProfile({...profile, ...res.data}))
+  }
+
+  const handleSendFriendRequest = () => {
+    axios.put(api.SEND_FRIEND_REQUEST, {slug: params.slug})
       .then(res => setProfile({...profile, ...res.data}))
   }
 
@@ -46,7 +58,10 @@ const Profile = () => {
     action = <Typography variant='overline'>Your Profile</Typography>
   }
   else if (profile?.isFriend) {
-    action = <Button>Message</Button>
+    action = <>
+      <Button onClick={handleSendMessage}>Message</Button>
+      <Button onClick={handleDeleteFriend}>Remove from friends</Button>
+    </>
   }
   else if (profile?.didUserSendFriendRequest) {
     action = <>

@@ -9,7 +9,7 @@ import * as validators from '../../util/validators'
 
 import axios from '../../util/axios'
 import socket from '../../util/socket'
-import UserContext from '../../util/UserContext'
+import UserContext from '../../contexts/UserContext'
 import Login from './Login'
 import SubmitButton from './SubmitButton'
 

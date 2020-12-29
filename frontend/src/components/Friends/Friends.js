@@ -1,31 +1,18 @@
 import {useEffect, useState} from 'react'
-import {Box, List, ListSubheader, Typography, IconButton, Divider} from '@material-ui/core'
+import {useHistory} from 'react-router-dom'
+import {Box, List, ListSubheader, Typography, Divider} from '@material-ui/core'
 import {Delete, Done, Clear, Send} from '@material-ui/icons'
 
 import axios from '../../util/axios'
 import * as api from '../../util/api'
-import UserListItem from '../UserListItem/UserListItem'
+import * as urls from '../../util/urls'
 import Spinner from '../Spinner/Spinner'
+import UserListItem from '../UserListItem/UserListItem'
+import UserListItemActions from '../UserListItem/UserListItemActions'
 
-const FriendListItem = ({user, positiveIcon, handlePositive, negativeIcon, handleNegative}) =>
-  <UserListItem user={user} key={user.slug}>
-    <Box ml='auto'>
-      <IconButton onClick={e => {
-        e.stopPropagation()
-        handlePositive(user.slug)
-      }}>
-        {positiveIcon}
-      </IconButton>
-      <IconButton onClick={e => {
-        e.stopPropagation()
-        handleNegative(user.slug)
-      }}>
-        {negativeIcon}
-      </IconButton>
-    </Box>
-  </UserListItem>
 
 const Friends = () => {
+  const history = useHistory()
   const [friendRequests, setFriendRequests] = useState(null)
   const [friends, setFriends] = useState(null)
 
@@ -58,8 +45,8 @@ const Friends = () => {
       })
   }
 
-  const handleSendMessage = (e) => {
-
+  const handleSendMessage = (receiverSlug) => {
+    history.push(`${urls.CHAT}?receiver=${receiverSlug}`)
   }
 
   const handleDeleteFriend = (slug) => {
@@ -83,13 +70,20 @@ const Friends = () => {
           ? <Spinner/>
           : friendRequests.length
             ? friendRequests.map(user =>
-              <FriendListItem
-                key={user.slug}
-                user={user}
-                positiveIcon={<Done color='primary'/>}
-                handlePositive={handleAcceptRequest}
-                negativeIcon={<Clear color='secondary'/>}
-                handleNegative={handleDeleteRequest}/>
+              <UserListItem key={user.slug} user={user}>
+                <UserListItemActions
+                  actions={[
+                    {
+                      icon: <Done color='primary'/>,
+                      onClick: () => handleAcceptRequest(user.slug)
+                    },
+                    {
+                      icon: <Clear color='secondary'/>,
+                      onClick: () => handleDeleteRequest(user.slug)
+                    }
+                  ]}
+                />
+              </UserListItem>
             )
             : <Box component={Typography} align='center' p={2}>Nothing here :(</Box>
         }
@@ -106,13 +100,20 @@ const Friends = () => {
           ? <Spinner/>
           : friends.length
             ? friends.map(user =>
-              <FriendListItem
-                key={user.slug}
-                user={user}
-                positiveIcon={<Send color='primary'/>}
-                handlePositive={handleSendMessage}
-                negativeIcon={<Delete color='disabled'/>}
-                handleNegative={handleDeleteFriend}/>
+              <UserListItem key={user.slug} user={user}>
+                <UserListItemActions
+                  actions={[
+                    {
+                      icon: <Send color='primary'/>,
+                      onClick: () => handleSendMessage(user.slug),
+                    },
+                    {
+                      icon: <Delete color='disabled'/>,
+                      onClick: () => handleDeleteFriend(user.slug),
+                    }
+                  ]}
+                />
+              </UserListItem>
             )
             : <Box component={Typography} align='center' p={2}>Nothing here :(</Box>
         }
