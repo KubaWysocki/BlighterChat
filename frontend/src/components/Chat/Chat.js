@@ -13,7 +13,7 @@ import socket from '../../util/socket'
 
 const Chat = ({onSetActiveChat}) => {
   const [user] = useContext(UserContext)
-  const [notifications, setNotifications] = useContext(NotificationsContext)
+  const setNotifications = useContext(NotificationsContext)[1]
   const history = useHistory()
   const {params} = useRouteMatch('/chat/:slug?')
   const {search, state: routeState} = useLocation()
@@ -22,13 +22,15 @@ const Chat = ({onSetActiveChat}) => {
   const receiver = search.split('=')[1]
 
   const handleSetChat = useCallback((chat) => {
-    const newNotifications = {...notifications}
-    delete newNotifications[chat.slug]
-    setNotifications(newNotifications)
+    setNotifications(notifications => {
+      const newNotifications = {...notifications}
+      delete newNotifications[chat.slug]
+      return newNotifications
+    })
     setChat(chat)
     onSetActiveChat(chat.slug)
     history.replace(`${urls.CHAT}/${chat.slug}`)
-  }, [setChat, history, notifications, setNotifications, onSetActiveChat])
+  }, [setChat, history, setNotifications, onSetActiveChat])
 
   useEffect(() => {
     return () => onSetActiveChat(null)
@@ -45,7 +47,7 @@ const Chat = ({onSetActiveChat}) => {
             const {chatSlug, message} = data
             if (chat.slug !== chatSlug) return //oposite case handled in /src/App.js
 
-            setChat(
+            setChat(chat =>
               Object.assign({}, chat, {messages: [message, ...chat.messages]})
             )
           })
