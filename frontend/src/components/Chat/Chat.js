@@ -11,7 +11,7 @@ import Messages from './Messages'
 import ChatTopBar from './ChatTopBar'
 import socket from '../../util/socket'
 
-const Chat = ({onSetActiveChat}) => {
+const Chat = ({activeChatRef, onSetActiveChat}) => {
   const [user] = useContext(UserContext)
   const setNotifications = useContext(NotificationsContext)[1]
   const history = useHistory()
@@ -30,11 +30,19 @@ const Chat = ({onSetActiveChat}) => {
     setChat(chat)
     onSetActiveChat(chat.slug)
     history.replace(`${urls.CHAT}/${chat.slug}`)
-  }, [setChat, history, setNotifications, onSetActiveChat])
+  }, [history, setNotifications, onSetActiveChat])
 
-  useEffect(() => {
-    return () => onSetActiveChat(null)
-  }, [onSetActiveChat])
+  const chatMessageCallback = useCallback(data => {
+    const {chatSlug, message} = data
+    if (activeChatRef.current !== chatSlug) return //oposite case handled in /src/App.js
+
+    setChat(chat =>
+      Object.assign({}, chat, {messages: [message, ...chat.messages]})
+    )
+    if (message.user.slug !== user.slug) {
+      axios.post(api.MESSAGE_READ, {_id: message._id})
+    }
+  }, [activeChatRef, user.slug])
 
   useEffect(() => {
     if (!chat) {
@@ -42,29 +50,24 @@ const Chat = ({onSetActiveChat}) => {
         .then(res => {
           if (res.data.newChat) return
 
-          const chat = res.data
-          socket.get().on('chat-message', data => {
-            const {chatSlug, message} = data
-            if (chat.slug !== chatSlug) return //oposite case handled in /src/App.js
-
-            setChat(chat =>
-              Object.assign({}, chat, {messages: [message, ...chat.messages]})
-            )
-          })
-          handleSetChat(chat)
+          handleSetChat(res.data)
+          socket.get().on('chat-message', chatMessageCallback)
         })
     }
-  }, [chat, search, params.slug, handleSetChat])
+  }, [chat, search, params.slug, handleSetChat, chatMessageCallback])
+
+  useEffect(() => {
+    return () => {
+      onSetActiveChat(null)
+      socket.get().off('chat-message', chatMessageCallback)
+    }
+  }, [onSetActiveChat, chatMessageCallback])
 
   const topBarName = useMemo(() => {
     if (routeState?.username) return routeState.username
     else if (chat) {
-      if (chat.users.length > 2) {
-        return chat.name
-      }
-      else {
-        return chat.users.find(u => u.username !== user.username).username
-      }
+      if (chat.users.length > 2) return chat.name
+      else return chat.users.find(u => u.username !== user.username).username
     }
     else return receiver
   }, [chat, receiver, routeState?.username, user.username])

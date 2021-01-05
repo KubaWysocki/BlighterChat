@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useCallback, useEffect, useState, useRef} from 'react'
 import {Switch, Route, useHistory} from 'react-router-dom'
 
 import axios from './util/axios'
@@ -16,12 +16,19 @@ import Spinner from './components/Spinner/Spinner'
 import Friends from './components/Friends/Friends'
 import ChatIcon from './components/ChatIcon/ChatIcon'
 import Chat from './components/Chat/Chat'
+import Feed from './components/Feed/Feed'
 
 function App() {
   const userContext = useState(null)
   const setUser = userContext[1]
 
-  const [activeChat, setActiveChat] = useState(null)
+  const [activeChat, _setActiveChat] = useState(null)
+  const activeChatRef = useRef(activeChat)
+  const setActiveChat = useCallback((data) => {
+    activeChatRef.current = data
+    _setActiveChat(data)
+  }, [_setActiveChat])
+
   const notificationsContext = useState({})
   const [notifications, setNotifications] = notificationsContext
 
@@ -48,41 +55,53 @@ function App() {
           }
         })
         setUser(userData)
-        setLoading(false)
 
-        socket.init({token})
-          .on('chat-message', data => {
-            const {chatSlug, message} = data
-
-            if (activeChat === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
-
-            if(!notifications[chatSlug]) {
-              setNotifications({
-                ...notifications,
-                [chatSlug]: [message]
-              })
+        return axios.get(api.NOTIFICATIONS_COUNT)
+          .then(res => {
+            let unreadMessages = {}
+            for (let key in res.data) {
+              unreadMessages[key] = new Array(res.data[key]).fill('notification') // notification is an string here as it is only used for counting
             }
-            else {
-              setNotifications({
-                ...notifications,
-                [chatSlug]: [
-                  ...notifications[chatSlug],
-                  message
-                ]
+            setNotifications(unreadMessages)
+
+            setLoading(false)
+
+            socket.init({token})
+              .on('chat-message', data => {
+                const {chatSlug, message} = data
+
+                if (activeChatRef.current === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
+
+                setNotifications((notifications) => {
+                  if (!notifications[chatSlug]) {
+                    return {
+                      ...notifications,
+                      [chatSlug]: [message]
+                    }
+                  }
+                  else {
+                    return {
+                      ...notifications,
+                      [chatSlug]: [
+                        ...notifications[chatSlug],
+                        message
+                      ]
+                    }
+                  }
+                })
               })
+
+            if(history.location.pathname === urls.SLASH ||
+                history.location.pathname.includes(urls.UNAUTHENTICATED)) {
+              history.push(urls.FEED)
             }
           })
-
-        if(history.location.pathname === urls.SLASH ||
-          history.location.pathname.includes(urls.UNAUTHENTICATED)) {
-          history.push(urls.FEED)
-        }
       })
       .catch(() => {
         history.push(`${urls.UNAUTHENTICATED}?known`)
         return setLoading(false)
       })
-  }, [history, setUser, activeChat, notifications, setNotifications])
+  }, [history, setUser, setNotifications])
 
   if (loading) return <Spinner/>
 
@@ -110,10 +129,10 @@ function App() {
             <Friends/>
           </Route>
           <Route path={urls.CHAT}>
-            <Chat onSetActiveChat={setActiveChat}/>
+            <Chat activeChatRef={activeChatRef} onSetActiveChat={setActiveChat}/>
           </Route>
           <Route path={urls.FEED}>
-
+            <Feed/>
           </Route>
         </NotificationsContext.Provider>
       </UserContext.Provider>

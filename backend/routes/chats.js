@@ -10,4 +10,6 @@ router.put('/create-chat', chatsController.createChat)
 
 router.post('/send-message', chatsController.postMessage)
 
+router.post('/message-read', chatsController.messageRead)
+
 module.exports = router

@@ -30,7 +30,7 @@ exports.getChat = async(req, res) => {
   const chat = req.user.chats[0]
   if (!chat) return res.status(200).json({newChat: true})
 
-  await chat.getMessages()
+  await chat.getMessages(req.user._id)
   await chat.execPopulate('users', '-__v -_id -chats -friendRequests -friends -email')
   delete chat._doc._id
   delete chat._doc.__v
@@ -59,7 +59,7 @@ exports.createChat = async(req, res) => {
     throw ApiError(404, 'Group chats have to have a name')
   }
 
-  const message = new Message({user: req.user._id, content})
+  const message = new Message({user: req.user._id, content, readList: [req.user._id]})
   await message.save()
   const allChatUsers = receivers.concat(req.user)
   const chat = await new Chat({
@@ -100,15 +100,26 @@ exports.postMessage = async(req, res) => {
   }
   if (!chat) throw new ApiError(401, 'Chat not found')
 
-  const message = await new Message({user: req.user._id, content}).save()
+  const message = await new Message({user: req.user._id, content, readList: [req.user._id]}).save()
   chat.messages.unshift(message)
   await chat.save()
 
-  await message.execPopulate('user', '-__v -_id -chats -friendRequests -friends -email')
-  delete message._doc._id
+  await message.execPopulate([{
+    path: 'user',
+    select: '-__v -_id -chats -friendRequests -friends -email'
+  }, {
+    path: 'readList',
+    select: '-_id username'
+  }])
   delete message._doc.__v
 
   ioInstance.get().to(chat.slug).emit('chat-message', {chatSlug, message})
 
   res.status(200).json({slug: chat.slug})
+}
+
+exports.messageRead = async(req, res) => {
+  const {_id} = req.body
+  await Message.updateOne({_id}, {$addToSet: {readList: req.user._id}})
+  res.status(200).json({})
 }

@@ -8,11 +8,7 @@ import reportWebVitals from './reportWebVitals'
 
 import './index.scss'
 
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark'
-  }
-})
+const theme = createMuiTheme({palette: {type: 'dark'}})
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const URLSlugs = require('mongoose-url-slugs')
 
+const Message = require('./Message')
 const {modelNames} = require('../util/constants')
 
 const Schema = mongoose.Schema
@@ -20,7 +21,8 @@ const chatSchema = new Schema({
 
 chatSchema.plugin(URLSlugs('name'))
 
-chatSchema.methods.getMessages = async function() {
+chatSchema.methods.getMessages = async function(userId) {
+  await Message.updateMany({_id: {$in: this.messages}}, {$addToSet: {readList: userId}})
   return this.execPopulate({
     path: 'messages',
     select: '-_id -__v',

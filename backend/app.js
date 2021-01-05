@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
 const userSetRoutes = require('./routes/usersSet')
 const chatRoutes = require('./routes/chats')
+const feedRoutes = require('./routes/feed')
 
 
 const app = express()
@@ -31,6 +32,7 @@ app.use(userRoutes)
 app.use(userSetRoutes)
 
 app.use(chatRoutes)
+app.use(feedRoutes)
 
 app.use(errorHandler)
 
