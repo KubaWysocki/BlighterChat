@@ -22,18 +22,43 @@ function App() {
   const userContext = useState(null)
   const setUser = userContext[1]
 
-  const [activeChat, _setActiveChat] = useState(null)
-  const activeChatRef = useRef(activeChat)
-  const setActiveChat = useCallback((data) => {
+  const activeChatRef = useRef(null)
+  const setActiveChat = useCallback(data => {
     activeChatRef.current = data
-    _setActiveChat(data)
-  }, [_setActiveChat])
+  }, [])
 
   const notificationsContext = useState({})
   const [notifications, setNotifications] = notificationsContext
 
   const [loading, setLoading] = useState(true)
   const history = useHistory()
+
+  const handleInitIO = useCallback((token) => {
+    socket.init({token: token})
+      .on('chat-message', data => {
+        const {chatSlug, message} = data
+
+        if (activeChatRef.current === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
+
+        setNotifications((notifications) => {
+          if (!notifications[chatSlug]) {
+            return {
+              ...notifications,
+              [chatSlug]: [message]
+            }
+          }
+          else {
+            return {
+              ...notifications,
+              [chatSlug]: [
+                ...notifications[chatSlug],
+                message
+              ]
+            }
+          }
+        })
+      })
+  }, [setNotifications])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -66,30 +91,7 @@ function App() {
 
             setLoading(false)
 
-            socket.init({token})
-              .on('chat-message', data => {
-                const {chatSlug, message} = data
-
-                if (activeChatRef.current === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
-
-                setNotifications((notifications) => {
-                  if (!notifications[chatSlug]) {
-                    return {
-                      ...notifications,
-                      [chatSlug]: [message]
-                    }
-                  }
-                  else {
-                    return {
-                      ...notifications,
-                      [chatSlug]: [
-                        ...notifications[chatSlug],
-                        message
-                      ]
-                    }
-                  }
-                })
-              })
+            handleInitIO(token)
 
             if(history.location.pathname === urls.SLASH ||
                 history.location.pathname.includes(urls.UNAUTHENTICATED)) {
@@ -101,7 +103,7 @@ function App() {
         history.push(`${urls.UNAUTHENTICATED}?known`)
         return setLoading(false)
       })
-  }, [history, setUser, setNotifications])
+  }, [history, setUser, setNotifications, handleInitIO])
 
   if (loading) return <Spinner/>
 
@@ -120,7 +122,7 @@ function App() {
               </>
           }/>
           <Route path={urls.UNAUTHENTICATED}>
-            <Auth/>
+            <Auth onInitIO={handleInitIO}/>
           </Route>
           <Route path={urls.PROFILE}>
             <Profile/>

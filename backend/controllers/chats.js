@@ -81,6 +81,12 @@ exports.createChat = async(req, res) => {
   delete message._doc._id
   delete message._doc.__v
 
+  receivers.forEach(receiver => {
+    ioInstance.getActiveConnection(receiver, (io, [connection, socket]) => {
+      socket.join(chat.slug)
+    })
+  })
+
   ioInstance.get().to(chat.slug).emit('chat-message', {chatSlug: chat.slug, message})
 
   res.status(200).json(chat)

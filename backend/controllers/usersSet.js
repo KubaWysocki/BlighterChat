@@ -19,7 +19,7 @@ exports.getFriendRequests = async(req, res) => {
   req.user.friendRequests.forEach(r => r.notify = false)
   await req.user.save()
 
-  ioInstance.getActiveConnection(req.user, (io, connection) => {
+  ioInstance.getActiveConnection(req.user, (io, [connection]) => {
     io.to(connection)
       .emit('friend-request', {friendRequests: 0})
   })

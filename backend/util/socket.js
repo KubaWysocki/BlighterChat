@@ -28,10 +28,10 @@ module.exports = {
   getActiveConnection: (user, callback) => {
     if (!io) throw ApiError(500, 'Socket not initialized')
     const activeConnections = io.sockets.sockets //Map
-    let connection = null
+    let socket = null
     for (let [key, value] of activeConnections) {
-      if (user._id.equals(value.user._id)) connection = key
+      if (user._id.equals(value.user._id)) socket = [key, value]
     }
-    if (connection) callback(io, connection)
+    if (socket) callback(io, socket)
   }
 }

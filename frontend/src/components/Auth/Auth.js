@@ -5,11 +5,14 @@ import {Tabs, Tab, Box} from '@material-ui/core'
 import Login from './Login'
 import Signup from './Signup'
 
-const Signin = () => {
+const Signin = ({onInitIO}) => {
   const {search} = useLocation()
   const [activeTab, setActiveTab] = useState(search === '?new' ? 1 : 0)
 
-  const tabs = [<Login/>, <Signup/>]
+  const tabs = [
+    <Login onInitIO={onInitIO}/>,
+    <Signup onInitIO={onInitIO}/>
+  ]
 
   return <Box pt='10%'>
     <Tabs

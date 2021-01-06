@@ -31,7 +31,7 @@ exports.sendFriendRequest = async(req, res) => {
   newFriend.friendRequests.push({user: req.user._id, notify: true})
   await newFriend.save()
 
-  ioInstance.getActiveConnection(newFriend, (io, connection) => {
+  ioInstance.getActiveConnection(newFriend, (io, [connection]) => {
     io.to(connection)
       .emit('friend-request', {
         friendRequests: newFriend.friendRequests.filter(fr => fr.notify === true).length

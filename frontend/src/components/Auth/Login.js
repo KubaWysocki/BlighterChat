@@ -4,7 +4,6 @@ import {useForm} from 'react-hook-form'
 import {useHistory} from 'react-router-dom'
 
 import axios from '../../util/axios'
-import socket from '../../util/socket'
 import * as urls from '../../util/urls'
 import * as api from '../../util/api'
 import UserContext from '../../contexts/UserContext'
@@ -31,7 +30,7 @@ const Login = (props) => {
           }
         })
         setUser(userData)
-        socket.init({token})
+        props.onInitIO(token)
         history.push(urls.FEED)
       })
       .catch(error => {

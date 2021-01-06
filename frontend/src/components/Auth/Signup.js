@@ -8,12 +8,11 @@ import * as api from '../../util/api'
 import * as validators from '../../util/validators'
 
 import axios from '../../util/axios'
-import socket from '../../util/socket'
 import UserContext from '../../contexts/UserContext'
 import Login from './Login'
 import SubmitButton from './SubmitButton'
 
-const Signup = (props) => {
+const Signup = ({onInitIO}) => {
   const {register, watch, errors, setError, handleSubmit} = useForm()
   const history = useHistory()
   const setUser = useContext(UserContext)[1]
@@ -29,7 +28,7 @@ const Signup = (props) => {
           }
         })
         setUser(userData)
-        socket.init({token})
+        onInitIO(token)
         history.push(urls.PROFILE + userData.slug)
       })
       .catch(error => {
