@@ -42,7 +42,10 @@ exports.createChat = async(req, res) => {
   const {chatName, slugs, content} = req.body
   if (!content) throw ApiError(401, 'Message can not be empty')
 
-  const receivers = slugs?.length && await User.find({slug: {$in: slugs}})
+  const receivers = slugs?.length && await User.find({
+    _id: {$in: req.user.friends},
+    slug: {$in: slugs}
+  })
   if(!receivers?.length) throw ApiError(404, 'Recivers not found')
 
   const isGroupChat = receivers.length > 1
@@ -59,7 +62,7 @@ exports.createChat = async(req, res) => {
     throw ApiError(404, 'Group chats have to have a name')
   }
 
-  const message = new Message({user: req.user._id, content, readList: [req.user._id]})
+  const message = new Message({user: req.user._id, content, readList: []})
   await message.save()
   const allChatUsers = receivers.concat(req.user)
   const chat = await new Chat({
@@ -73,16 +76,15 @@ exports.createChat = async(req, res) => {
     {$push: {chats: chat}}
   )
 
-  await chat.getMessages()
+  await chat.getMessages(req.user._id)
   delete chat._doc._id
   delete chat._doc.__v
 
   await message.execPopulate('user', '-__v -_id -chats -friendRequests -friends -email')
-  delete message._doc._id
   delete message._doc.__v
 
-  receivers.forEach(receiver => {
-    ioInstance.getActiveConnection(receiver, (io, [connection, socket]) => {
+  chat.users.forEach(user => {
+    ioInstance.getActiveConnection(user, (io, [connection, socket]) => { //eslint-disable-line no-unused-vars
       socket.join(chat.slug)
     })
   })

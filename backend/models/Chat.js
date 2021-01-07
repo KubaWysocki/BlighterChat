@@ -23,6 +23,7 @@ chatSchema.plugin(URLSlugs('name'))
 
 chatSchema.methods.getMessages = async function(userId) {
   await Message.updateMany({_id: {$in: this.messages}}, {$addToSet: {readList: userId}})
+
   return this.execPopulate({
     path: 'messages',
     select: '-_id -__v',

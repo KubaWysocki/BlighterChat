@@ -20,12 +20,15 @@ exports.signup = async(req, res) => {
   if(users.length) throw new ApiError(404, {email: 'Email already in use'})
 
   const hashedPassword = await bcrypt.hash(password, 12)
+
   const user = await new User({
     email,
     username,
     password: hashedPassword,
   }).save()
+
   const token = createToken(user._id.toString())
+
   res.status(200).json({token, email, username, slug: user.slug})
 }
 

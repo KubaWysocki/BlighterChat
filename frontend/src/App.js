@@ -7,6 +7,7 @@ import * as api from './util/api'
 import {LOGGED_OUT} from './util/constants'
 import UserContext from './contexts/UserContext'
 import NotificationsContext from './contexts/NotificationsContext'
+import initNotifications from './util/initNotifications'
 import socket from './util/socket'
 
 import Auth from './components/Auth/Auth'
@@ -83,11 +84,7 @@ function App() {
 
         return axios.get(api.NOTIFICATIONS_COUNT)
           .then(res => {
-            let unreadMessages = {}
-            for (let key in res.data) {
-              unreadMessages[key] = new Array(res.data[key]).fill('notification') // notification is an string here as it is only used for counting
-            }
-            setNotifications(unreadMessages)
+            setNotifications(initNotifications(res.data))
 
             setLoading(false)
 

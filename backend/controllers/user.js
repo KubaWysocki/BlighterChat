@@ -41,9 +41,8 @@ exports.sendFriendRequest = async(req, res) => {
 }
 
 exports.getNewFriendRequestsNumber = async(req, res) => {
-  res.status(200).json({
-    friendRequests: req.user.friendRequests.filter(fr => fr.notify === true).length
-  })
+  const number = req.user.friendRequests.filter(fr => fr.notify === true).length
+  res.status(200).json({friendRequests: number})
 }
 
 exports.rejectFriendRequest = async(req, res) => {

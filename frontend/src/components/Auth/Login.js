@@ -7,6 +7,8 @@ import axios from '../../util/axios'
 import * as urls from '../../util/urls'
 import * as api from '../../util/api'
 import UserContext from '../../contexts/UserContext'
+import NotificationsContext from '../../contexts/NotificationsContext'
+import initNotifications from '../../util/initNotifications'
 import SubmitButton from './SubmitButton'
 import * as validators from '../../util/validators'
 
@@ -15,6 +17,7 @@ const Login = (props) => {
   const {register, errors, handleSubmit, setError} = useForm()
   const history = useHistory()
   const setUser = useContext(UserContext)[1]
+  const setNotifications = useContext(NotificationsContext)[1]
 
   const usedRegister = props.register || register
   const usedErrors = props.errors || errors
@@ -30,8 +33,14 @@ const Login = (props) => {
           }
         })
         setUser(userData)
+
         props.onInitIO(token)
-        history.push(urls.FEED)
+
+        axios.get(api.NOTIFICATIONS_COUNT)
+          .then(res => {
+            setNotifications(initNotifications(res.data))
+            history.push(urls.FEED)
+          })
       })
       .catch(error => {
         const errors = error.response.data.message

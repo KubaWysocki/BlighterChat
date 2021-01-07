@@ -13,24 +13,13 @@ import socket from '../../util/socket'
 
 const Chat = ({activeChatRef, onSetActiveChat}) => {
   const [user] = useContext(UserContext)
-  const setNotifications = useContext(NotificationsContext)[1]
+  const [notifications, setNotifications] = useContext(NotificationsContext)
   const history = useHistory()
   const {params} = useRouteMatch('/chat/:slug?')
   const {search, state: routeState} = useLocation()
   const [chat, setChat] = useState(null)
 
   const receiver = search.split('=')[1]
-
-  const handleSetChat = useCallback((chat) => {
-    setNotifications(notifications => {
-      const newNotifications = {...notifications}
-      delete newNotifications[chat.slug]
-      return newNotifications
-    })
-    setChat(chat)
-    onSetActiveChat(chat.slug)
-    history.replace(`${urls.CHAT}/${chat.slug}`)
-  }, [history, setNotifications, onSetActiveChat])
 
   const chatMessageCallback = useCallback(data => {
     const {chatSlug, message} = data
@@ -44,6 +33,20 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
     }
   }, [activeChatRef, user.slug])
 
+  const handleSetChat = useCallback((chat) => {
+    setNotifications(notifications => {
+      const newNotifications = {...notifications}
+      delete newNotifications[chat.slug]
+      return newNotifications
+    })
+    setChat(chat)
+    onSetActiveChat(chat.slug)
+
+    socket.get().on('chat-message', chatMessageCallback)
+
+    history.replace(`${urls.CHAT}/${chat.slug}`)
+  }, [history, setNotifications, onSetActiveChat, chatMessageCallback])
+
   useEffect(() => {
     if (!chat) {
       axios.get(`${api.GET_CHAT}${params.slug || 'findOrCreate'}${search || ''}`)
@@ -51,10 +54,9 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
           if (res.data.newChat) return
 
           handleSetChat(res.data)
-          socket.get().on('chat-message', chatMessageCallback)
         })
     }
-  }, [chat, search, params.slug, handleSetChat, chatMessageCallback])
+  }, [chat, search, params.slug, handleSetChat])
 
   useEffect(() => {
     return () => {
@@ -73,7 +75,7 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
   }, [chat, receiver, routeState?.username, user.username])
 
   return <>
-    <ChatTopBar name={topBarName}/>
+    <ChatTopBar name={topBarName} otherChatsNotif={chat && Object.keys(notifications).length}/>
     <Messages messages={chat?.messages}/>
     <ChatInput chat={chat} receiver={receiver} onSetChat={handleSetChat}/>
   </>

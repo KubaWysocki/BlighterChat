@@ -6,7 +6,7 @@ exports.getFeed = async(req, res) => {
     populate: [{
       path: 'messages',
       select: '-_id -__v',
-      sort: {_id: -1},
+      options: {sort: '-timestamp'},
       perDocumentLimit: 1,
       populate: [{
         path: 'user',

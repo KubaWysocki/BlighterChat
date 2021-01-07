@@ -45,8 +45,8 @@ const Friends = () => {
       })
   }
 
-  const handleSendMessage = (receiverSlug) => {
-    history.push(`${urls.CHAT}?receiver=${receiverSlug}`)
+  const handleSendMessage = ({slug, username}) => {
+    history.push(`${urls.CHAT}?receiver=${slug}`, {username: username})
   }
 
   const handleDeleteFriend = (slug) => {
@@ -105,7 +105,7 @@ const Friends = () => {
                   actions={[
                     {
                       icon: <Send color='primary'/>,
-                      onClick: () => handleSendMessage(user.slug),
+                      onClick: () => handleSendMessage(user),
                     },
                     {
                       icon: <Delete color='disabled'/>,
