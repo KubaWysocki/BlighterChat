@@ -42,11 +42,13 @@ exports.login = async(req, res) => {
   if (!passwordMatch) throw new ApiError(401, {password: 'Invalid password'})
 
   const token = createToken(user._id.toString())
+
   res.status(200).json({token, email, username: user.username, slug: user.slug})
 }
 
 exports.autoLogin = async(req, res) => {
   const token = createToken(req.user._id.toString())
   const {email, username, slug} = req.user
+
   res.status(200).json({token, email, username, slug})
 }

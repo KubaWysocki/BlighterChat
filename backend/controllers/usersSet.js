@@ -9,9 +9,25 @@ exports.getUsers = async(req, res) => {
       $options: 'i'
     },
     _id: {$nin: req.user.friends.concat(req.user._id)}
-  }).select('-__v -_id -friends -friendRequests -chats')
+  }).select('-_id username slug')
 
   res.status(200).json(users)
+}
+
+exports.getFriends = async(req, res) => {
+  const {search} = req.query
+  await req.user.execPopulate({
+    path: 'friends',
+    select: '-_id username slug',
+    match: {
+      username: {
+        $regex: search || '',
+        $options: 'i'
+      }
+    }
+  })
+
+  res.status(200).json(req.user.friends)
 }
 
 exports.getFriendRequests = async(req, res) => {
@@ -26,19 +42,4 @@ exports.getFriendRequests = async(req, res) => {
 
   const requestsList = req.user.friendRequests.map(fr => fr.user)
   res.status(200).json(requestsList)
-}
-
-exports.getFriends = async(req, res) => {
-  const {search} = req.query
-  await req.user.execPopulate({
-    path: 'friends',
-    select: '-__v -_id -friends -friendRequests -chats',
-    match: {
-      username: {
-        $regex: search || '',
-        $options: 'i'
-      }
-    }
-  })
-  res.status(200).json(req.user.friends)
 }

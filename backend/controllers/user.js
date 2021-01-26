@@ -32,16 +32,16 @@ exports.sendFriendRequest = async(req, res) => {
   await newFriend.save()
 
   ioInstance.getActiveConnection(newFriend, (io, [connection]) => {
-    io.to(connection)
-      .emit('friend-request', {
-        friendRequests: newFriend.friendRequests.filter(fr => fr.notify === true).length
-      })
+    const number = newFriend.friendRequests.filter(fr => fr.notify === true).length
+    io.to(connection).emit('friend-request', {friendRequests: number})
   })
+
   res.status(200).json({isFriendRequestSent: true})
 }
 
 exports.getNewFriendRequestsNumber = async(req, res) => {
   const number = req.user.friendRequests.filter(fr => fr.notify === true).length
+
   res.status(200).json({friendRequests: number})
 }
 
@@ -50,12 +50,13 @@ exports.rejectFriendRequest = async(req, res) => {
   await req.user.getFriendRequests()
   req.user.friendRequests = req.user.friendRequests.filter(fr => fr.user.slug !== slug)
   await req.user.save()
+
   res.status(200).json({slug, didUserSendFriendRequest: false})
 }
 
 exports.addFriend = async(req, res) => {
   const {slug} = req.body
-  const newFriend = await User.findOne({slug})
+  const newFriend = await User.findOne({slug}).select('-__v username slug friends')
 
   newFriend.friends.push(req.user)
   await newFriend.save()
@@ -66,6 +67,9 @@ exports.addFriend = async(req, res) => {
   req.user.friendRequests = req.user.friendRequests.filter(fr => !newFriend._id.equals(fr.user._id))
   req.user.friends.push(newFriend)
   await req.user.save()
+
+  delete newFriend._doc._id
+  delete newFriend._doc.friends
 
   res.status(200).json(newFriend)
 }

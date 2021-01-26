@@ -22,6 +22,7 @@ exports.getFeed = async(req, res) => {
       select: '-_id username'
     }]
   })
+
   res.status(200).json(req.user.chats)
 }
 
@@ -41,5 +42,6 @@ exports.notificationsCount = async(req, res) => {
   })
   const result = {}
   req.user.chats.forEach(chat => chat.messages.length && (result[chat.slug] = chat.messages.length))
+
   res.status(200).json(result)
 }

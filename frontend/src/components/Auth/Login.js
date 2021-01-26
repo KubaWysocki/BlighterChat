@@ -74,7 +74,7 @@ const Login = (props) => {
       type='password'
       label='Password'
       margin='normal'
-      placeholder='N0t5o0bv10u5Pa55word'
+      placeholder='N0t5o0bv10u5Pa55w0rd'
       error={!!usedErrors.password}
       helperText={usedErrors.password?.message}
       inputRef={usedRegister(validators.password)}
