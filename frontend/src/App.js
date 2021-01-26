@@ -34,8 +34,8 @@ function App() {
   const [loading, setLoading] = useState(true)
   const history = useHistory()
 
-  const handleInitIO = useCallback((token) => {
-    socket.init({token: token})
+  const handleInitIO = useCallback(() => {
+    socket.init()
       .on('chat-message', data => {
         const {chatSlug, message} = data
 
@@ -73,14 +73,7 @@ function App() {
     }
     axios.get(api.AUTO_LOGIN)
       .then(res => {
-        const {token, ...userData} = res.data
-        localStorage.setItem('token', token)
-        Object.assign(axios.defaults, {
-          headers: {
-            authorization: `Bearer ${token}`
-          }
-        })
-        setUser(userData)
+        setUser(res.data)
 
         return axios.get(api.NOTIFICATIONS_COUNT)
           .then(res => {
@@ -88,7 +81,7 @@ function App() {
 
             setLoading(false)
 
-            handleInitIO(token)
+            handleInitIO()
 
             if(history.location.pathname === urls.SLASH ||
                 history.location.pathname.includes(urls.UNAUTHENTICATED)) {

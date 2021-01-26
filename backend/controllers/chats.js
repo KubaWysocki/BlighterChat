@@ -40,7 +40,7 @@ exports.getChat = async(req, res) => {
 
 exports.createChat = async(req, res) => {
   const {chatName, slugs, content} = req.body
-  if (!content) throw ApiError(401, 'Message can not be empty')
+  if (!content) throw ApiError(406, 'Message can not be empty')
 
   const receivers = slugs?.length && await User.find({
     _id: {$in: req.user.friends},
@@ -56,10 +56,10 @@ exports.createChat = async(req, res) => {
         $all: [req.user._id, receivers[0]]
       }
     })
-    if (existingChat) throw ApiError(404, 'You can not create second private chat with the same user')
+    if (existingChat) throw ApiError(406, 'You can not create second private chat with the same user')
   }
   else if (!chatName) {
-    throw ApiError(404, 'Group chats have to have a name')
+    throw ApiError(406, 'Group chats have to have a name')
   }
 
   const message = new Message({user: req.user._id, content, readList: []})
@@ -91,12 +91,12 @@ exports.createChat = async(req, res) => {
 
   ioInstance.get().to(chat.slug).emit('chat-message', {chatSlug: chat.slug, message})
 
-  res.status(200).json(chat)
+  res.status(201).json(chat)
 }
 
 exports.postMessage = async(req, res) => {
   const {chatSlug, content} = req.body
-  if (!content) throw ApiError(401, 'Message can not be empty')
+  if (!content) throw ApiError(406, 'Message can not be empty')
 
   let chat
   if (chatSlug) {
@@ -106,7 +106,7 @@ exports.postMessage = async(req, res) => {
     })
     chat = req.user.chats[0]
   }
-  if (!chat) throw new ApiError(401, 'Chat not found')
+  if (!chat) throw new ApiError(406, 'Chat not found')
 
   const message = await new Message({user: req.user._id, content, readList: [req.user._id]}).save()
   chat.messages.unshift(message)

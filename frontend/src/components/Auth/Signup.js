@@ -20,16 +20,10 @@ const Signup = ({onInitIO}) => {
   const handleSignup = (data) => {
     axios.put(api.NEW_USER, data)
       .then((res) => {
-        const {token, ...userData} = res.data
-        localStorage.setItem('token', token)
-        Object.assign(axios.defaults, {
-          headers: {
-            authorization: `Bearer ${token}`
-          }
-        })
-        setUser(userData)
-        onInitIO(token)
-        history.push(urls.PROFILE + userData.slug)
+        localStorage.setItem('token', 'true')
+        setUser(res.data)
+        onInitIO()
+        history.push(urls.PROFILE + res.data.slug)
       })
       .catch(error => {
         const errors = error.response.data.message

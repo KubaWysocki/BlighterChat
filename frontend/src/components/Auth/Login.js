@@ -25,16 +25,10 @@ const Login = (props) => {
   const handleLogin = async(data) => {
     axios.post(api.LOGIN, data)
       .then(res => {
-        const {token, ...userData} = res.data
-        localStorage.setItem('token', token)
-        Object.assign(axios.defaults, {
-          headers: {
-            authorization: `Bearer ${token}`
-          }
-        })
-        setUser(userData)
+        localStorage.setItem('token', 'true')
+        setUser(res.data)
 
-        props.onInitIO(token)
+        props.onInitIO()
 
         axios.get(api.NOTIFICATIONS_COUNT)
           .then(res => {

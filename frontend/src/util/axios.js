@@ -4,9 +4,7 @@ import {BASE_URL} from './constants'
 
 const instance = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`
-  }
+  withCredentials: true
 })
 
 export default instance
