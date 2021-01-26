@@ -5,8 +5,8 @@ import {BASE_URL} from './constants'
 let instance
 
 const socket = {
-  init: query => {
-    instance = io(BASE_URL, {query})
+  init: () => {
+    instance = io(BASE_URL, {withCredentials: true})
     return instance
   },
   get: () => instance

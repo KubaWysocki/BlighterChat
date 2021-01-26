@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken')
 
-const {JWT_SECRET_KEY} = require('./constants')
-
 module.exports = (token) => {
   let decodedToken
   try {
-    decodedToken = token && jwt.verify(token, JWT_SECRET_KEY)
+    decodedToken = token && jwt.verify(token, process.env.TOKEN_SECRET)
   }
   catch(error) {
     error.status = 500
