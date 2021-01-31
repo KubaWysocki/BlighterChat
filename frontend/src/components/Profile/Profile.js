@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react'
 import {Avatar, Box, Button, Typography} from '@material-ui/core'
 import {useHistory, useRouteMatch} from 'react-router-dom'
-import {Done} from '@material-ui/icons'
+import {Delete, Done, PersonAdd, Send} from '@material-ui/icons'
 
 import * as api from '../../util/api'
 import * as urls from '../../util/urls'
@@ -59,21 +59,46 @@ const Profile = () => {
   }
   else if (profile?.isFriend) {
     action = <>
-      <Button onClick={handleSendMessage}>Message</Button>
-      <Button onClick={handleDeleteFriend}>Remove from friends</Button>
+      <Button
+        variant='contained'
+        color='primary'
+        startIcon={<Send/>}
+        onClick={handleSendMessage}
+      >Message</Button>
+      <Button
+        variant='contained'
+        color='secondary'
+        startIcon={<Delete/>}
+        onClick={handleDeleteFriend}
+      >Remove</Button>
     </>
   }
   else if (profile?.didUserSendFriendRequest) {
     action = <>
-      <Button onClick={handleAddFriend} color='primary'>Accept Friend</Button>
-      <Button onClick={handleRejectFriend}>Reject Friend</Button>
+      <Button
+        variant='contained'
+        color='primary'
+        startIcon={<PersonAdd/>}
+        onClick={handleAddFriend}
+      >Accept Friend</Button>
+      <Button
+        variant='contained'
+        color='secondary'
+        startIcon={<Delete/>}
+        onClick={handleRejectFriend}
+      >Reject Friend</Button>
     </>
   }
   else if (profile?.isFriendRequestSent) {
-    action = <Typography><Done/>Friend request sent</Typography>
+    action = <Typography><Done/> Friend request sent</Typography>
   }
   else if (!profile?.isFriendRequestSent) {
-    action = <Button color='primary' onClick={handleSendFriendRequest}>Send Invitation</Button>
+    action = <Button
+      color='primary'
+      variant='contained'
+      startIcon={<PersonAdd/>}
+      onClick={handleSendFriendRequest}
+    >Send Invitation</Button>
   }
 
   return <Box
@@ -89,9 +114,16 @@ const Profile = () => {
         <Box component={Avatar} width={100} height={100} fontSize={40}>
           {profile.username[0]}
         </Box>
-        <Typography variant='h3'>{profile.username}</Typography>
-        <Typography variant='h5'>{profile.email}</Typography>
-        {action}
+        <Box
+          height={0.4}
+          display='flex'
+          justifyContent='space-around'
+          alignItems='center'
+          flexDirection='column'>
+          <Typography variant='h3'>{profile.username}</Typography>
+          <Typography variant='h5'>{profile.email}</Typography>
+          {action}
+        </Box>
       </>
     }
   </Box>
