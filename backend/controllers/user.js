@@ -56,7 +56,7 @@ exports.rejectFriendRequest = async(req, res) => {
 
 exports.addFriend = async(req, res) => {
   const {slug} = req.body
-  const newFriend = await User.findOne({slug}).select('-__v username slug friends')
+  const newFriend = await User.findOne({slug}).select('username slug friends')
 
   newFriend.friends.push(req.user)
   await newFriend.save()
@@ -69,6 +69,7 @@ exports.addFriend = async(req, res) => {
   await req.user.save()
 
   delete newFriend._doc._id
+  delete newFriend._doc.__v
   delete newFriend._doc.friends
 
   res.status(200).json(newFriend)
