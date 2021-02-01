@@ -6,11 +6,12 @@ import {useHistory} from 'react-router-dom'
 import axios from '../../util/axios'
 import * as urls from '../../util/urls'
 import * as api from '../../util/api'
+import * as validators from '../../util/validators'
+import {LS_TOKEN} from '../../util/constants'
+import initNotifications from '../../util/initNotifications'
 import UserContext from '../../contexts/UserContext'
 import NotificationsContext from '../../contexts/NotificationsContext'
-import initNotifications from '../../util/initNotifications'
 import SubmitButton from './SubmitButton'
-import * as validators from '../../util/validators'
 
 
 const Login = (props) => {
@@ -25,7 +26,7 @@ const Login = (props) => {
   const handleLogin = async(data) => {
     axios.post(api.LOGIN, data)
       .then(res => {
-        localStorage.setItem('token', 'true')
+        localStorage.setItem(LS_TOKEN.KEY, LS_TOKEN.PRESENT)
         setUser(res.data)
 
         props.onInitIO()

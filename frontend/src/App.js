@@ -4,7 +4,7 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 import axios from './util/axios'
 import * as urls from './util/urls'
 import * as api from './util/api'
-import {LOGGED_OUT} from './util/constants'
+import {LS_TOKEN} from './util/constants'
 import UserContext from './contexts/UserContext'
 import NotificationsContext from './contexts/NotificationsContext'
 import initNotifications from './util/initNotifications'
@@ -62,12 +62,12 @@ function App() {
   }, [setNotifications])
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem(LS_TOKEN.KEY)
     if (!token) {
       history.push(`${urls.UNAUTHENTICATED}?new`)
       return setLoading(false)
     }
-    if (token === LOGGED_OUT) {
+    if (token === LS_TOKEN.LOGGED_OUT) {
       history.push(`${urls.UNAUTHENTICATED}?known`)
       return setLoading(false)
     }
