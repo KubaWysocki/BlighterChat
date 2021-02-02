@@ -7,7 +7,7 @@
     "start": "nodemon --exec 'npm run lint && node' -L app.js -e js,ejs",
     "lint": "./node_modules/.bin/eslint --fix ./",
     "mongo": "sudo service mongodb",
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -27,7 +27,8 @@
     "chai": "^4.2.0",
     "eslint": "^7.14.0",
     "mocha": "^8.2.1",
-    "nodemon": "^1.18.3"
+    "nodemon": "^1.18.3",
+    "sinon": "^9.2.4"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -36,7 +37,8 @@
     "env": {
       "node": true,
       "commonjs": true,
-      "es6": true
+      "es6": true,
+      "mocha": true
     },
     "extends": [
       "eslint:recommended"

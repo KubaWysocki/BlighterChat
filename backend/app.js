@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const dotenv = require('dotenv')
 
-const {MONGO_DB_URI} = require('./util/constants')
+const {MONGO_DB_URI, MONGO_DB_CONNECTION_OPTIONS} = require('./util/constants')
 
 const io = require('./util/socket')
 
@@ -43,7 +43,7 @@ app.use(feedRoutes)
 
 app.use(errorHandler)
 
-mongoose.connect(MONGO_DB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(MONGO_DB_URI, MONGO_DB_CONNECTION_OPTIONS)
   .then(() => {
     console.log('running!!') //eslint-disable-line
     const server = app.listen(8000)

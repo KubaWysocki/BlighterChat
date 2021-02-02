@@ -49,7 +49,7 @@ const Login = (props) => {
     component={props.register ? 'div' : 'form'}
     mx='auto'
     width='fit-content'
-    py={props.register ? undefined : 2}
+    py={props.register ? 0 : 2}
     onSubmit={!props.register ? handleSubmit(handleLogin) : undefined}
   >
     <TextField

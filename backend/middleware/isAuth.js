@@ -4,18 +4,27 @@ const decodeToken = require('../util/decodeToken')
 
 module.exports = async(req, res, next) => {
   const token = req.cookies.JWT
-  if (!token) throw new ApiError(401, 'Not authenticated')
+  const auth_error = new ApiError(401, 'Not authenticated')
+  if (!token) {
+    next(auth_error)
+    return auth_error
+  }
 
   let decodedToken
   try {
     decodedToken = decodeToken(token)
   }
   catch {
-    throw new ApiError(401, 'Not authenticated')
+    next(auth_error)
+    return auth_error
   }
 
   const user = await User.findById(decodedToken._id)
-  if (!user) throw new ApiError(401, 'User not found')
+  if (!user) {
+    const user_error = new ApiError(401, 'User not found')
+    next(user_error)
+    return user_error
+  }
   req.user = user
 
   next()
