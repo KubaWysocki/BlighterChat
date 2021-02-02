@@ -57,3 +57,8 @@ exports.autoLogin = async(req, res) => {
 
   res.status(202).json({email, username, slug})
 }
+
+exports.logout = (req, res) => {
+  res.clearCookie('JWT')
+  res.status(205).json({})
+}

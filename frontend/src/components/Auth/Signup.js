@@ -8,6 +8,7 @@ import * as api from '../../util/api'
 import * as validators from '../../util/validators'
 
 import axios from '../../util/axios'
+import {LS_TOKEN} from '../../util/constants'
 import UserContext from '../../contexts/UserContext'
 import Login from './Login'
 import SubmitButton from './SubmitButton'
@@ -20,7 +21,7 @@ const Signup = ({onInitIO}) => {
   const handleSignup = (data) => {
     axios.put(api.NEW_USER, data)
       .then((res) => {
-        localStorage.setItem('token', 'true')
+        localStorage.setItem(LS_TOKEN.KEY, LS_TOKEN.PRESENT)
         setUser(res.data)
         onInitIO()
         history.push(urls.PROFILE + res.data.slug)

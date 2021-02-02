@@ -7,11 +7,13 @@ import axios from '../../util/axios'
 import socket from '../../util/socket'
 import * as api from '../../util/api'
 import * as urls from '../../util/urls'
-import {LOGGED_OUT} from '../../util/constants'
+import {LS_TOKEN} from '../../util/constants'
 import UserContext from '../../contexts/UserContext'
+import NotificationsContext from '../../contexts/NotificationsContext'
 
 const AppMenu = ({onClear}) => {
   const [user, setUser] = useContext(UserContext)
+  const setNotifications = useContext(NotificationsContext)[1]
   const history = useHistory()
   const [anchorEl, setAnchorEl] = useState(null)
   const [friendRequestsNum, setFriendRequestsNum] = useState(0)
@@ -44,14 +46,14 @@ const AppMenu = ({onClear}) => {
   }
 
   const handleLogout = () => {
-    localStorage.setItem('token', LOGGED_OUT)
-    setUser(null)
-    Object.assign(axios.defaults, {
-      headers: {
-        authorization: null
-      }
-    })
-    history.push(urls.UNAUTHENTICATED)
+    axios.post(api.LOGOUT)
+      .then(() => {
+        socket.get().close()
+        localStorage.setItem(LS_TOKEN.KEY, LS_TOKEN.LOGGED_OUT)
+        history.push(urls.UNAUTHENTICATED)
+        setUser(null)
+        setNotifications([])
+      })
   }
 
   return <Box ml={1.5}>

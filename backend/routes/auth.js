@@ -11,4 +11,6 @@ router.post('/login', authController.login)
 
 router.get('/auto-login', isAuth, authController.autoLogin)
 
+router.post('/logout', isAuth, authController.logout)
+
 module.exports = router
