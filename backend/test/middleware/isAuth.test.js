@@ -74,6 +74,7 @@ describe('isAuth middleware', function() {
     jwt.verify.returns({_id: user._id})
 
     await isAuth(req, {}, () => null)
+
     expect(req).to.have.property('user')
     expect(req.user._id.toString()).to.equal(user._id.toString())
   })
