@@ -1,27 +1,18 @@
 const sinon = require('sinon')
 const expect = require('chai').expect
 
+const {Response} = require('../mocks')
 const errorHandler = require('../../middleware/errorHandler')
 
 describe('errorHandler middleware', function() {
-  let stub
+  let logStub
   before(function() {
-    stub = sinon.stub(console, 'log')
+    logStub = sinon.stub(console, 'log')
   })
 
   let res
   beforeEach(function() {
-    res = {
-      _status: null,
-      _data: null,
-      status: function(s) {
-        this._status = s
-        return this
-      },
-      json: function(d) {
-        this._data = d
-      }
-    }
+    res = new Response()
   })
 
   after(function() {
@@ -31,15 +22,16 @@ describe('errorHandler middleware', function() {
   it('should log error to the console and set default status code', function() {
     errorHandler({}, {}, res, () => null)
 
-    expect(stub.calledOnce).to.be.true
-    expect(res._status).to.equal(500)
+    expect(logStub.calledOnce).to.be.true
+    expect(res.status.calledOnceWithExactly(500)).to.be.true
   })
 
   it('should set status code and message if given', function() {
-    errorHandler({status: 400, message: 'probably some descriptive message'}, {}, res, () => null)
+    const message = 'probably some descriptive message'
+    errorHandler({status: 400, message}, {}, res, () => null)
 
-    expect(res._status).to.equal(400)
-    expect(res._data).to.have.property('message', 'probably some descriptive message')
+    expect(res.status.calledOnceWithExactly(400)).to.be.true
+    expect(res.json.calledOnceWithExactly({message})).to.be.true
   })
 
   it('should call next', function() {

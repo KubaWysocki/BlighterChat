@@ -30,6 +30,7 @@ describe('isAuth middleware', function() {
     }
     try {
       await isAuth(req, {}, () => null)
+      throw {}
     }
     catch(e) {
       expect(e).to.have.property('status', 401)
@@ -43,6 +44,7 @@ describe('isAuth middleware', function() {
     }
     try {
       await isAuth(req, {}, () => null)
+      throw {}
     }
     catch(e) {
       expect(e).to.have.property('status', 401)
@@ -59,6 +61,7 @@ describe('isAuth middleware', function() {
 
     try {
       await isAuth(req, {}, () => null)
+      throw {}
     }
     catch(e) {
       expect(e).to.have.property('status', 401)
