@@ -3,11 +3,11 @@ const sinon = require('sinon')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const mock = require('../../mocks')
+const mock = require('../../mock')
 const authController = require('../../../controllers/auth')
 const User = require('../../../models/User')
 
-describe('signup controllers auth', function() {
+describe('signup auth controllers', function() {
 
   before(function() {
     sinon.stub(jwt, 'sign')

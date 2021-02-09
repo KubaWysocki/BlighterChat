@@ -3,10 +3,10 @@ const sinon = require('sinon')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const mock = require('../../mocks')
+const mock = require('../../mock')
 const authController = require('../../../controllers/auth')
 
-describe('login controllers auth', function() {
+describe('login auth controllers', function() {
 
   let existingUser
   before(async function() {

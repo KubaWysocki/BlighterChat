@@ -3,7 +3,7 @@ const sinon = require('sinon')
 const jwt = require('jsonwebtoken')
 
 const isAuth = require('../../middleware/isAuth')
-const mock = require('../mocks')
+const mock = require('../mock')
 
 describe('isAuth middleware', function() {
 

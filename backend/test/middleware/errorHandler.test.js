@@ -1,7 +1,7 @@
 const sinon = require('sinon')
 const expect = require('chai').expect
 
-const mock = require('../mocks')
+const mock = require('../mock')
 const errorHandler = require('../../middleware/errorHandler')
 
 describe('errorHandler middleware', function() {
