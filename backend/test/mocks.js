@@ -1,4 +1,7 @@
 const sinon = require('sinon')
+const faker = require('faker')
+
+const User = require('../models/User')
 
 class Response {
   constructor() {
@@ -12,5 +15,15 @@ class Response {
     this.clearCookie = sinon.spy()
   }
 }
-
 exports.Response = Response
+
+const mockUser = () =>
+  new User({
+    email: faker.internet.email(),
+    username: faker.internet.userName(),
+    password: faker.internet.password()
+  }).save()
+
+mockUser.deleteAllUsers = () => User.deleteMany({})
+
+exports.User = mockUser

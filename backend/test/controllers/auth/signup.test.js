@@ -3,7 +3,7 @@ const sinon = require('sinon')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const {Response} = require('../../mocks')
+const mock = require('../../mocks')
 const authController = require('../../../controllers/auth')
 const User = require('../../../models/User')
 
@@ -18,7 +18,7 @@ describe('signup controllers auth', function() {
 
   let res
   beforeEach(function() {
-    res = new Response()
+    res = new mock.Response()
   })
 
   after(function() {

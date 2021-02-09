@@ -10,6 +10,7 @@ module.exports = async(req, res, next) => {
   let decodedToken
   try {
     decodedToken = decodeToken(token)
+    if (!decodedToken) throw {}
   }
   catch {
     throw auth_error

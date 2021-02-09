@@ -3,24 +3,15 @@ const sinon = require('sinon')
 const jwt = require('jsonwebtoken')
 
 const isAuth = require('../../middleware/isAuth')
-const User = require('../../models/User')
+const mock = require('../mocks')
 
 describe('isAuth middleware', function() {
-  let user
 
-  before(async function() {
-    user = await new User({
-      email: 'test@test.com',
-      username: 'test',
-      password: 'password',
-    }).save()
+  before(function() {
+    sinon.stub(jwt, 'verify')
   })
 
   after(function() {
-    return User.deleteMany({})
-  })
-
-  afterEach(function() {
     sinon.restore()
   })
 
@@ -56,7 +47,6 @@ describe('isAuth middleware', function() {
     const req = {
       cookies: {JWT: 'somehow valid token for unexisting user'}
     }
-    sinon.stub(jwt, 'verify')
     jwt.verify.returns({_id: '507f191e810c19729de860ea'}) //fake but valid mongodb _id
 
     try {
@@ -70,15 +60,18 @@ describe('isAuth middleware', function() {
   })
 
   it('should attach user to request', async function() {
+    const user = await mock.User()
+
     const req = {
       cookies: {JWT: 'lets say it is valid'}
     }
-    sinon.stub(jwt, 'verify')
     jwt.verify.returns({_id: user._id})
 
     await isAuth(req, {}, () => null)
 
     expect(req).to.have.property('user')
     expect(req.user._id.toString()).to.equal(user._id.toString())
+
+    await mock.User.deleteAllUsers()
   })
 })

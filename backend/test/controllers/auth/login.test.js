@@ -3,25 +3,20 @@ const sinon = require('sinon')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const {Response} = require('../../mocks')
+const mock = require('../../mocks')
 const authController = require('../../../controllers/auth')
-const User = require('../../../models/User')
 
 describe('login controllers auth', function() {
 
   let existingUser
   before(async function() {
     sinon.stub(bcrypt, 'compare')
-    existingUser = await new User({
-      email: 'test@test.test',
-      username: 'test',
-      password: 'password'
-    }).save()
+    existingUser = await mock.User()
   })
 
   after(function() {
     sinon.restore()
-    return User.deleteMany({})
+    return mock.User.deleteAllUsers()
   })
 
   it('should create token, set cookie and send response', async function() {
@@ -36,12 +31,16 @@ describe('login controllers auth', function() {
 
     bcrypt.compare.returns(true)
 
-    const res = new Response()
+    const res = new mock.Response()
     await authController.login(req, res)
 
     expect(res.status.calledOnceWithExactly(202)).to.be.true
     expect(res.cookie.calledOnceWith('JWT', 'token')).to.be.true
-    expect(res.json.calledOnceWithExactly({email: req.body.email, username: existingUser.username, slug: existingUser.slug})).to.be.true
+    expect(res.json.calledOnceWithExactly({
+      email: req.body.email,
+      username: existingUser.username,
+      slug: existingUser.slug
+    })).to.be.true
   })
 
   it('should throw error when there is no user with provided email', async function() {
