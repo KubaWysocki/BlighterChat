@@ -6,11 +6,7 @@ const authController = require('../../../controllers/auth')
 describe('logout auth controllers', function() {
 
   it('clear cookie and send response', async function() {
-    const existingUser = await mock.User()
-
-    const req = {
-      user: existingUser
-    }
+    const req = new mock.Request(null, await mock.User())
     const res = new mock.Response()
     await authController.logout(req, res)
 

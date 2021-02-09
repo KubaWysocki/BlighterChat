@@ -16,9 +16,7 @@ describe('isAuth middleware', function() {
   })
 
   it('should throw error if no auth cookie is present', async function() {
-    const req = {
-      cookies: {}
-    }
+    const req = new mock.Request(null, null, {})
     try {
       await isAuth(req, {}, () => null)
       throw {}
@@ -30,9 +28,7 @@ describe('isAuth middleware', function() {
   })
 
   it('should throw error if auth cookie is invalid', async function() {
-    const req = {
-      cookies: {JWT: 'invalid cookie for sure'}
-    }
+    const req = new mock.Request(null, null, {JWT: 'invalid cookie for sure'})
     try {
       await isAuth(req, {}, () => null)
       throw {}
@@ -44,11 +40,9 @@ describe('isAuth middleware', function() {
   })
 
   it('should throw error if there is no user', async function() {
-    const req = {
-      cookies: {JWT: 'somehow valid token for unexisting user'}
-    }
     jwt.verify.returns({_id: '507f191e810c19729de860ea'}) //fake but valid mongodb _id
 
+    const req = new mock.Request(null, null, {JWT: 'somehow valid token for unexisting user'})
     try {
       await isAuth(req, {}, () => null)
       throw {}
@@ -61,15 +55,11 @@ describe('isAuth middleware', function() {
 
   it('should attach user to request', async function() {
     const user = await mock.User()
-
-    const req = {
-      cookies: {JWT: 'lets say it is valid'}
-    }
     jwt.verify.returns({_id: user._id})
 
+    const req = new mock.Request(undefined, null, {JWT: 'lets say it is valid'})
     await isAuth(req, {}, () => null)
 
-    expect(req).to.have.property('user')
     expect(req.user._id.toString()).to.equal(user._id.toString())
 
     await mock.User.deleteAllUsers()

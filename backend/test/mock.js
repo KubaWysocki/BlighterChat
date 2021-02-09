@@ -3,6 +3,15 @@ const faker = require('faker')
 
 const User = require('../models/User')
 
+class Request {
+  constructor(body, user, cookies) {
+    this.body = body
+    this.user = user
+    this.cookies = cookies
+  }
+}
+exports.Request = Request
+
 class Response {
   constructor() {
     this.status = sinon.stub()

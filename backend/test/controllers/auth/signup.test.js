@@ -31,13 +31,11 @@ describe('signup auth controllers', function() {
   })
 
   it('should create new user', async function() {
-    const req = {
-      body: {
-        email: 'new@email.com',
-        username: 'tester',
-        password: 'passoword',
-      }
-    }
+    const req = new mock.Request({
+      email: 'new@email.com',
+      username: 'tester',
+      password: 'password',
+    })
     await authController.signup(req, res)
 
     expect(bcrypt.hash.calledOnce).to.equal(true)
@@ -61,13 +59,11 @@ describe('signup auth controllers', function() {
   })
 
   it('should slugify username', async function() {
-    const req = {
-      body: {
-        email: 'secondUserWithSameUsernameAsPrevious@email.com',
-        username: 'tester',
-        password: 'password',
-      }
-    }
+    const req = new mock.Request({
+      email: 'secondUserWithSameUsernameAsPrevious@email.com',
+      username: 'tester',
+      password: 'password',
+    })
 
     await authController.signup(req, res)
 
@@ -76,11 +72,9 @@ describe('signup auth controllers', function() {
   })
 
   it('should throw error when trying to create user with existing email', async function() {
-    const req = {
-      body: {
-        email: 'new@email.com', //same as test case 1
-      }
-    }
+    const req = new mock.Request({
+      email: 'new@email.com', //same as test case 1
+    })
     try {
       await authController.signup(req, {})
       throw {}
@@ -92,11 +86,9 @@ describe('signup auth controllers', function() {
   })
 
   it('should throw error when missing data', async function() {
-    const req = {
-      body: {}
-    }
+    const req = new mock.Request({})
     try {
-      await authController.signup(req, res)
+      await authController.signup(req, {})
       throw {}
     }
     catch(e) {

@@ -20,17 +20,15 @@ describe('login auth controllers', function() {
   })
 
   it('should create token, set cookie and send response', async function() {
-    const req = {
-      body: {
-        email: existingUser.email,
-        password: 'Lets say it is a valid password'
-      }
-    }
     sinon.stub(jwt, 'sign')
     jwt.sign.returns('token')
 
     bcrypt.compare.returns(true)
 
+    const req = new mock.Request({
+      email: existingUser.email,
+      password: 'Lets say it is a valid password'
+    })
     const res = new mock.Response()
     await authController.login(req, res)
 
@@ -44,9 +42,7 @@ describe('login auth controllers', function() {
   })
 
   it('should throw error when there is no user with provided email', async function() {
-    const req = {
-      body: {}
-    }
+    const req = new mock.Request({})
     try {
       await authController.login(req, {})
       throw {}
@@ -58,14 +54,12 @@ describe('login auth controllers', function() {
   })
 
   it('should throw error when passwords compare fails', async function() {
-    const req = {
-      body: {
-        email: existingUser.email,
-        password: 'Not maching password'
-      }
-    }
     bcrypt.compare.returns(false)
 
+    const req = new mock.Request({
+      email: existingUser.email,
+      password: 'Not maching password'
+    })
     try {
       await authController.login(req, {})
       throw {}
