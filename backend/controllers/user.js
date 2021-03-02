@@ -85,5 +85,5 @@ exports.removeFriend = async(req, res) => {
   removedFriend.friends = removedFriend.friends.filter(f => !req.user._id.equals(f._id))
   await removedFriend.save()
 
-  res.status(200).json({slug})
+  res.status(200).json({slug, isFriend: false})
 }

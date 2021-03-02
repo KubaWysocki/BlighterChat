@@ -9,19 +9,20 @@ import * as urls from '../../util/urls'
 import Spinner from '../Spinner/Spinner'
 import UserListItem from '../UserListItem/UserListItem'
 import UserListItemActions from '../UserListItem/UserListItemActions'
+import LoadMore from '../LoadMore/LoadMore'
+import useLoadMore from '../../Hooks/useLoadMore'
 
 
 const Friends = () => {
   const history = useHistory()
   const [friendRequests, setFriendRequests] = useState(null)
-  const [friends, setFriends] = useState(null)
+  const [friends, setFriends] = useState([])
+
+  const [loading, handleLoadMoreFriends] = useLoadMore(api.FRIENDS, setFriends)
 
   useEffect(() => {
     axios.get(api.FRIEND_REQUESTS)
       .then(res => setFriendRequests(res.data))
-
-    axios.get(api.FRIENDS)
-      .then(res => setFriends(res.data))
   }, [])
 
   const handleAcceptRequest = (slug) => {
@@ -46,7 +47,7 @@ const Friends = () => {
   }
 
   const handleSendMessage = ({slug, username}) => {
-    history.push(`${urls.CHAT}?receiver=${slug}`, {username: username})
+    history.push(`${urls.CHAT}?receiver=${slug}`, {name: username})
   }
 
   const handleDeleteFriend = (slug) => {
@@ -67,7 +68,7 @@ const Friends = () => {
           variant='h5'>Friend Invitations</Box>
         <Divider/>
         {friendRequests === null
-          ? <Spinner/>
+          ? <Box p={1}><Spinner/></Box>
           : friendRequests.length
             ? friendRequests.map(user =>
               <UserListItem key={user.slug} user={user}>
@@ -96,27 +97,29 @@ const Friends = () => {
           component={Typography}
           variant='h5'>Friends</Box>
         <Divider/>
-        {friends === null
-          ? <Spinner/>
-          : friends.length
-            ? friends.map(user =>
-              <UserListItem key={user.slug} user={user}>
-                <UserListItemActions
-                  actions={[
-                    {
-                      icon: <Send color='primary'/>,
-                      onClick: () => handleSendMessage(user),
-                    },
-                    {
-                      icon: <Delete color='disabled'/>,
-                      onClick: () => handleDeleteFriend(user.slug),
-                    }
-                  ]}
-                />
-              </UserListItem>
-            )
-            : <Box component={Typography} align='center' p={2}>Nothing here :(</Box>
-        }
+        {friends.map(user =>
+          <UserListItem key={user.slug} user={user}>
+            <UserListItemActions
+              actions={[
+                {
+                  icon: <Send color='primary'/>,
+                  onClick: () => handleSendMessage(user),
+                },
+                {
+                  icon: <Delete color='disabled'/>,
+                  onClick: () => handleDeleteFriend(user.slug),
+                }
+              ]}
+            />
+          </UserListItem>
+        )}
+        <LoadMore
+          loading={loading}
+          onLoadMore={handleLoadMoreFriends}
+          empty={
+            !friends?.length && <Box component={Typography} align='center' p={2}>Nothing here :(</Box>
+          }
+        />
         <Divider/>
       </ListSubheader>
     </List>

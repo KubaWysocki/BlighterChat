@@ -3,6 +3,8 @@ const Chat = require('../models/Chat')
 const Message = require('../models/Message')
 const ApiError = require('../util/ApiError')
 const ioInstance = require('../util/socket')
+const {pageSizes} = require('../util/constants')
+const isLastPage = require('../util/isLastPage')
 
 exports.getChat = async(req, res) => {
   const {slug} = req.params
@@ -30,7 +32,7 @@ exports.getChat = async(req, res) => {
   const chat = req.user.chats[0]
   if (!chat) return res.status(200).json({newChat: true})
 
-  await chat.getMessages(req.user._id)
+  await chat.getMessages(req.user._id, 0)
   await chat.execPopulate('users', '-__v -_id -chats -friendRequests -friends -email')
   delete chat._doc._id
   delete chat._doc.__v
@@ -56,7 +58,7 @@ exports.createChat = async(req, res) => {
         $all: [req.user._id, receivers[0]]
       }
     })
-    if (existingChat) throw ApiError(406, 'You can not create second private chat with the same user')
+    if (existingChat) throw new ApiError(406, 'You can not create second private chat with the same user')
   }
   else if (!chatName) {
     throw ApiError(406, 'Group chats have to have a name')
@@ -92,6 +94,23 @@ exports.createChat = async(req, res) => {
   ioInstance.get().to(chat.slug).emit('chat-message', {chatSlug: chat.slug, message})
 
   res.status(201).json(chat)
+}
+
+exports.getMoreMessages = async(req, res) => {
+  const {slug, page} = req.params
+  await req.user.execPopulate({
+    path: 'chats',
+    select: '-__v -_id',
+    match: {slug},
+  })
+  const chat = req.user.chats[0]
+  if (!chat) throw new ApiError(404, 'Can\'t load more messages for not existing chat')
+  const total = chat.messages.length
+  await chat.getMessages(req.user._id, page)
+  res.status(200).json({
+    content: chat.messages,
+    isLast: isLastPage(total, page, pageSizes.MESSAGES)
+  })
 }
 
 exports.postMessage = async(req, res) => {

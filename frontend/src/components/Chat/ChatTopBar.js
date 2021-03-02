@@ -1,13 +1,11 @@
-import {useHistory} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {Box, Paper, IconButton, Typography, Badge} from '@material-ui/core'
 import {ArrowBackRounded, Settings} from '@material-ui/icons'
 
 import * as urls from '../../util/urls'
 
-const ChatTopBar = ({name, otherChatsNotif}) => {
-  const history = useHistory()
-
-  return <Box
+const ChatTopBar = ({name, otherChatsNotif}) =>
+  <Box
     component={Paper}
     square
     width={1}
@@ -16,9 +14,9 @@ const ChatTopBar = ({name, otherChatsNotif}) => {
     alignItems='center'
     justifyContent='space-between'
     zIndex='tooltip'>
-    <IconButton onClick={() => history.push(urls.FEED)}>
+    <IconButton component={Link} to={urls.FEED}>
       <Badge
-        badgeContent={otherChatsNotif}
+        badgeContent={otherChatsNotif ? otherChatsNotif : 0}
         color='secondary'
         anchorOrigin={{
           vertical: 'top',
@@ -32,6 +30,5 @@ const ChatTopBar = ({name, otherChatsNotif}) => {
       <Settings/>
     </IconButton>
   </Box>
-}
 
 export default ChatTopBar

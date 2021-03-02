@@ -7,3 +7,9 @@ exports.modelNames = {
   CHAT: 'Chat',
   MESSAGE: 'Message'
 }
+
+exports.pageSizes = {
+  USERS: 15,
+  FEED: 30,
+  MESSAGES: 50,
+}

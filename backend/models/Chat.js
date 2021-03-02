@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const URLSlugs = require('mongoose-url-slugs')
 
 const Message = require('./Message')
-const {modelNames} = require('../util/constants')
+const {modelNames, pageSizes} = require('../util/constants')
 
 const Schema = mongoose.Schema
 
@@ -17,11 +17,11 @@ const chatSchema = new Schema({
   messages: [{
     type: Schema.Types.ObjectId, ref: modelNames.MESSAGE
   }]
-})
+}, {timestamps: true})
 
 chatSchema.plugin(URLSlugs('name'))
 
-chatSchema.methods.getMessages = async function(userId) {
+chatSchema.methods.getMessages = async function(userId, page) {
   await Message.updateMany({_id: {$in: this.messages}}, {$addToSet: {readList: userId}})
 
   return this.execPopulate({
@@ -30,6 +30,11 @@ chatSchema.methods.getMessages = async function(userId) {
     populate: {
       path: 'user',
       select: '-__v -_id -chats -friendRequests -friends -email'
+    },
+    options: {
+      sort: '-timestamp',
+      skip: Number(page) * pageSizes.MESSAGES,
+      limit: pageSizes.MESSAGES,
     }
   })
 }

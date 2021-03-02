@@ -1,33 +1,66 @@
 const User = require('../models/User')
 const ioInstance = require('../util/socket')
 
+const {pageSizes} = require('../util/constants')
+const isLastPage = require('../util/isLastPage')
+
 exports.getUsers = async(req, res) => {
+  const {page} = req.params
   const {search} = req.query
-  const users = await User.find({
+  const query = {
     username: {
       $regex: search,
       $options: 'i'
     },
     _id: {$nin: req.user.friends.concat(req.user._id)}
-  }).select('-_id username slug')
+  }
 
-  res.status(200).json(users)
+  const [total, users] = await Promise.all([
+    User.countDocuments(query),
+    User.find(query)
+      .sort('username')
+      .skip(Number(page) * pageSizes.USERS)
+      .limit(pageSizes.USERS)
+      .select('-_id username slug'),
+  ])
+
+  res.status(200).json({
+    content: users,
+    isLast: isLastPage(total, page, pageSizes.USERS)
+  })
 }
 
 exports.getFriends = async(req, res) => {
+  const {page} = req.params
   const {search} = req.query
-  await req.user.execPopulate({
-    path: 'friends',
-    select: '-_id username slug',
-    match: {
-      username: {
-        $regex: search || '',
-        $options: 'i'
-      }
+  const query = {
+    username: {
+      $regex: search || '',
+      $options: 'i'
     }
-  })
+  }
 
-  res.status(200).json(req.user.friends)
+  const [total, {friends}] = await Promise.all([
+    User.countDocuments({
+      ...query,
+      _id: {$in: req.user.friends}
+    }),
+    req.user.execPopulate({
+      path: 'friends',
+      select: '-_id username slug',
+      match: {...query},
+      options: {
+        sort: 'username',
+        skip: Number(page) * pageSizes.USERS,
+        limit: pageSizes.USERS,
+      },
+    }),
+  ])
+
+  res.status(200).json({
+    content: friends,
+    isLast: isLastPage(total, page, pageSizes.USERS)
+  })
 }
 
 exports.getFriendRequests = async(req, res) => {

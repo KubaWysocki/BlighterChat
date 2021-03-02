@@ -4,12 +4,14 @@ import {Search} from '@material-ui/icons'
 
 import AppMenu from './AppMenu'
 import SearchList from './SearchList'
+import useDebounce from '../../Hooks/useDebounce'
 
 
 const Navigation = () => {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState(null)
+  const debouncedSearch = useDebounce(search, 500)
 
-  const handleClear = () => setSearch('')
+  const handleClear = () => setSearch(null)
 
   return <>
     <AppBar color='transparent'>
@@ -17,8 +19,8 @@ const Navigation = () => {
         <TextField
           fullWidth
           placeholder='Search…'
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={search || ''}
+          onChange={(e) => setSearch(e.target.value || null)}
           InputProps={{
             startAdornment:
             <InputAdornment position='start'>
@@ -30,7 +32,7 @@ const Navigation = () => {
       </Toolbar>
     </AppBar>
     {search &&
-      <SearchList search={search} onClear={handleClear}/>
+      <SearchList search={debouncedSearch} onClear={handleClear}/>
     }
   </>
 }
