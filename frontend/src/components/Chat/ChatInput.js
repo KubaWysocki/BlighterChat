@@ -26,7 +26,7 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
         chatSlug: chat.slug,
         content: message
       })
-        .then(res => setMessage(''))
+        .then(() => setMessage(''))
     }
   }
 

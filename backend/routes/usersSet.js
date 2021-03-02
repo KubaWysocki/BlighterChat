@@ -4,10 +4,10 @@ const usersSetController = require('../controllers/usersSet')
 
 const router = express.Router()
 
-router.get('/users', usersSetController.getUsers)
+router.get('/users/:page', usersSetController.getUsers)
+
+router.get('/friends/:page', usersSetController.getFriends)
 
 router.get('/friend-requests', usersSetController.getFriendRequests)
-
-router.get('/friends', usersSetController.getFriends)
 
 module.exports = router

@@ -1,5 +1,5 @@
 import {useContext, useState, useEffect} from 'react'
-import {useHistory} from 'react-router-dom'
+import {Link, useHistory} from 'react-router-dom'
 import {Avatar, Badge, Box, Menu, MenuItem} from '@material-ui/core'
 import {AccountBox, Group, ExitToApp} from '@material-ui/icons'
 
@@ -34,16 +34,6 @@ const AppMenu = ({onClear}) => {
   }
 
   const handleCloseMenu = () => setAnchorEl(null)
-
-  const handleProfile = () => {
-    history.push(urls.PROFILE + user.slug)
-    handleCloseMenu()
-  }
-
-  const handleFriends = () => {
-    history.push(urls.FRIENDS)
-    handleCloseMenu()
-  }
 
   const handleLogout = () => {
     axios.post(api.LOGOUT)
@@ -86,10 +76,16 @@ const AppMenu = ({onClear}) => {
         vertical: 'top',
         horizontal: 'right',
       }}>
-      <MenuItem onClick={handleProfile}>
+      <MenuItem
+        component={Link}
+        to={urls.PROFILE + user.slug}
+        onClick={handleCloseMenu}>
         <AccountBox/>&nbsp; Profile
       </MenuItem>
-      <MenuItem onClick={handleFriends}>
+      <MenuItem
+        component={Link}
+        to={urls.FRIENDS}
+        onClick={handleCloseMenu}>
         <Badge
           badgeContent={friendRequestsNum}
           color='secondary'

@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from 'react'
 import {Avatar, Box, Button, Typography} from '@material-ui/core'
-import {useHistory, useRouteMatch} from 'react-router-dom'
+import {Link, useRouteMatch} from 'react-router-dom'
 import {Delete, Done, PersonAdd, Send} from '@material-ui/icons'
 
 import * as api from '../../util/api'
@@ -10,7 +10,6 @@ import UserContext from '../../contexts/UserContext'
 import Spinner from '../Spinner/Spinner'
 
 const Profile = () => {
-  const history = useHistory()
   const {params} = useRouteMatch('/profile/:slug?')
 
   const [user] = useContext(UserContext)
@@ -24,18 +23,15 @@ const Profile = () => {
       setProfile(user)
     }
     else {
+      setProfile(null)
       axios.get(api.GET_PROFILE + params.slug)
         .then(res => setProfile(res.data))
     }
   }, [user, params.slug])
 
-  const handleSendMessage = () => {
-    history.push(`${urls.CHAT}?receiver=${params.slug}`, {username: profile.username})
-  }
-
   const handleDeleteFriend = () => {
     axios.delete(api.REMOVE_FRIEND + params.slug)
-      .then(() => history.push(urls.FEED))
+      .then((res) => setProfile({...profile, ...res.data}))
   }
 
   const handleAddFriend = (e) => {
@@ -63,7 +59,12 @@ const Profile = () => {
         variant='contained'
         color='primary'
         startIcon={<Send/>}
-        onClick={handleSendMessage}
+        component={Link}
+        to={{
+          pathname: urls.CHAT,
+          search: `?receiver=${params.slug}`,
+          state: {name: profile.username}
+        }}
       >Message</Button>
       <Button
         variant='contained'
