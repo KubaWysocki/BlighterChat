@@ -15,12 +15,17 @@ module.exports = {
     })
 
     io.on('connection', async socket => {
-      const cookies = cookie.parse(socket.handshake.headers.cookie)
-      const {id} = decodeToken(cookies.JWT)
-      socket.user = await (await User.findOne({id})).execPopulate('chats')
-      socket.user.chats.forEach(chat => {
-        socket.join(chat.slug)
-      })
+      const cookies = cookie.parse(socket.handshake.headers.cookie || '')
+      if (cookies.JWT) {
+        const {id} = decodeToken(cookies.JWT)
+        socket.user = await (await User.findOne({id})).execPopulate('chats')
+        socket.user.chats.forEach(chat => {
+          socket.join(chat.slug)
+        })
+      }
+      else {
+        io.to(socket.id).emit('unauthorized')
+      }
     })
 
     return io

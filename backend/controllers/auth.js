@@ -4,13 +4,14 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const ApiError = require('../util/ApiError')
 
-const COOKIE_OPTIONS = {maxAge: 172800000, httpOnly: true}
+const AUTH_LIFETIME = 48 * 60 * 60 * 1000 //48h
+const COOKIE_OPTIONS = {maxAge: AUTH_LIFETIME, httpOnly: true}
 
 function createToken(_id) {
   return jwt.sign(
     {_id},
     process.env.TOKEN_SECRET,
-    {expiresIn: '48h'},
+    {expiresIn: AUTH_LIFETIME},
   )
 }
 

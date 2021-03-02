@@ -35,31 +35,38 @@ function App() {
   const history = useHistory()
 
   const handleInitIO = useCallback(() => {
-    socket.init()
-      .on('chat-message', data => {
-        const {chatSlug, message} = data
+    const io = socket.init()
 
-        if (activeChatRef.current === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
+    io.on('chat-message', data => {
+      const {chatSlug, message} = data
 
-        setNotifications((notifications) => {
-          if (!notifications[chatSlug]) {
-            return {
-              ...notifications,
-              [chatSlug]: [message]
-            }
+      if (activeChatRef.current === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
+
+      setNotifications((notifications) => {
+        if (!notifications[chatSlug]) {
+          return {
+            ...notifications,
+            [chatSlug]: [message]
           }
-          else {
-            return {
-              ...notifications,
-              [chatSlug]: [
-                ...notifications[chatSlug],
-                message
-              ]
-            }
+        }
+        else {
+          return {
+            ...notifications,
+            [chatSlug]: [
+              ...notifications[chatSlug],
+              message
+            ]
           }
-        })
+        }
       })
-  }, [setNotifications])
+    })
+
+    io.on('unauthorized', () => {
+      history.push(`${urls.UNAUTHENTICATED}/known`)
+      setNotifications({})
+      setUser(null)
+    })
+  }, [setNotifications, setUser, history])
 
   useEffect(() => {
     const token = localStorage.getItem(LS_TOKEN.KEY)
