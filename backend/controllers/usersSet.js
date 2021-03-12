@@ -1,5 +1,4 @@
 const User = require('../models/User')
-const ioInstance = require('../util/socket')
 
 const {pageSizes} = require('../util/constants')
 const isLastPage = require('../util/isLastPage')
@@ -67,11 +66,6 @@ exports.getFriendRequests = async(req, res) => {
   await req.user.getFriendRequests()
   req.user.friendRequests.forEach(r => r.notify = false)
   await req.user.save()
-
-  ioInstance.getActiveConnection(req.user, (io, [connection]) => {
-    io.to(connection)
-      .emit('friend-request', {friendRequests: 0})
-  })
 
   const requestsList = req.user.friendRequests.map(fr => fr.user)
   res.status(200).json(requestsList)

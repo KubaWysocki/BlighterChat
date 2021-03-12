@@ -8,7 +8,7 @@ router.get('/profile/:slug', userController.getProfile)
 
 router.put('/send-friend-request', userController.sendFriendRequest)
 
-router.get('/friend-requests-number', userController.getNewFriendRequestsNumber)
+router.get('/new-friend-requests-number', userController.getNewFriendRequestsNumber)
 
 router.delete('/reject-friend-request/:slug', userController.rejectFriendRequest)
 

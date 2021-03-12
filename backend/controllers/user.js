@@ -32,8 +32,7 @@ exports.sendFriendRequest = async(req, res) => {
   await newFriend.save()
 
   ioInstance.getActiveConnection(newFriend, (io, [connection]) => {
-    const number = newFriend.friendRequests.filter(fr => fr.notify === true).length
-    io.to(connection).emit('friend-request', {friendRequests: number})
+    io.to(connection).emit('friend-request')
   })
 
   res.status(200).json({isFriendRequestSent: true})

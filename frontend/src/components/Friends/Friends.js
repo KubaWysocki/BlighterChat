@@ -1,29 +1,41 @@
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {Box, List, ListSubheader, Typography, Divider} from '@material-ui/core'
-import {Delete, Done, Clear, Send} from '@material-ui/icons'
+import {Delete, Done, Clear, Send, SentimentVeryDissatisfied} from '@material-ui/icons'
 
 import axios from '../../util/axios'
 import * as api from '../../util/api'
 import * as urls from '../../util/urls'
+import socket from '../../util/socket'
 import Spinner from '../Spinner/Spinner'
 import UserListItem from '../UserListItem/UserListItem'
 import UserListItemActions from '../UserListItem/UserListItemActions'
 import LoadMore from '../LoadMore/LoadMore'
 import useLoadMore from '../../Hooks/useLoadMore'
+import FriendRequestsNumberContext from '../../contexts/FriendRequestsNumberContext'
 
 
 const Friends = () => {
   const history = useHistory()
   const [friendRequests, setFriendRequests] = useState(null)
   const [friends, setFriends] = useState([])
+  const setFriendRequestsNum = useContext(FriendRequestsNumberContext)[1]
 
   const [loading, handleLoadMoreFriends] = useLoadMore(api.FRIENDS, setFriends)
 
   useEffect(() => {
-    axios.get(api.FRIEND_REQUESTS)
-      .then(res => setFriendRequests(res.data))
-  }, [])
+    const getFriendRequests = () => {
+      axios.get(api.FRIEND_REQUESTS)
+        .then(res => {
+          setFriendRequestsNum(0)
+          setFriendRequests(res.data)
+        })
+    }
+    getFriendRequests()
+
+    socket.get().on('friend-request', getFriendRequests)
+    return () => socket.get().off('friend-request', getFriendRequests)
+  }, [setFriendRequestsNum])
 
   const handleAcceptRequest = (slug) => {
     axios.put(api.ADD_FRIEND, {slug})
@@ -59,6 +71,11 @@ const Friends = () => {
       })
   }
 
+  const nothingHere =
+    <Box component={Typography} align='center' p={2}>
+      Nothing here <SentimentVeryDissatisfied fontSize='small'/>
+    </Box>
+
   return <Box pt={7}>
     <List>
       <ListSubheader>
@@ -86,7 +103,7 @@ const Friends = () => {
                 />
               </UserListItem>
             )
-            : <Box component={Typography} align='center' p={2}>Nothing here :(</Box>
+            : nothingHere
         }
         <Divider/>
       </ListSubheader>
@@ -116,9 +133,7 @@ const Friends = () => {
         <LoadMore
           loading={loading}
           onLoadMore={handleLoadMoreFriends}
-          empty={
-            !friends?.length && <Box component={Typography} align='center' p={2}>Nothing here :(</Box>
-          }
+          empty={!friends?.length && nothingHere}
         />
         <Divider/>
       </ListSubheader>
