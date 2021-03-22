@@ -7,7 +7,7 @@ const mock = require('../../mock')
 const authController = require('../../../controllers/auth')
 const User = require('../../../models/User')
 
-describe('signup auth controllers', function() {
+describe('signup auth controller', function() {
 
   before(function() {
     sinon.stub(jwt, 'sign')
@@ -32,9 +32,11 @@ describe('signup auth controllers', function() {
 
   it('should create new user', async function() {
     const req = new mock.Request({
-      email: 'new@email.com',
-      username: 'tester',
-      password: 'password',
+      body: {
+        email: 'new@email.com',
+        username: 'tester',
+        password: 'password',
+      },
     })
     await authController.signup(req, res)
 
@@ -60,9 +62,11 @@ describe('signup auth controllers', function() {
 
   it('should slugify username', async function() {
     const req = new mock.Request({
-      email: 'secondUserWithSameUsernameAsPrevious@email.com',
-      username: 'tester',
-      password: 'password',
+      body: {
+        email: 'secondUserWithSameUsernameAsPrevious@email.com',
+        username: 'tester',
+        password: 'password',
+      },
     })
 
     await authController.signup(req, res)
@@ -73,7 +77,9 @@ describe('signup auth controllers', function() {
 
   it('should throw error when trying to create user with existing email', async function() {
     const req = new mock.Request({
-      email: 'new@email.com', //same as test case 1
+      body: {
+        email: 'new@email.com', //same as test case 1
+      },
     })
     try {
       await authController.signup(req, {})
@@ -86,7 +92,7 @@ describe('signup auth controllers', function() {
   })
 
   it('should throw error when missing data', async function() {
-    const req = new mock.Request({})
+    const req = new mock.Request()
     try {
       await authController.signup(req, {})
       throw {}

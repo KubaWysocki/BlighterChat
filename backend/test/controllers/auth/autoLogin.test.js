@@ -5,13 +5,13 @@ const jwt = require('jsonwebtoken')
 const mock = require('../../mock')
 const authController = require('../../../controllers/auth')
 
-describe('autoLogin auth controllers', function() {
+describe('autoLogin auth controller', function() {
 
   it('create token, set cookie and send response', async function() {
     sinon.stub(jwt, 'sign')
     jwt.sign.returns('token')
 
-    const req = new mock.Request({}, await mock.User())
+    const req = new mock.Request(null, await mock.User())
     const res = new mock.Response()
     await authController.autoLogin(req, res)
 

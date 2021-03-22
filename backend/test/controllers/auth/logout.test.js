@@ -3,7 +3,7 @@ const expect = require('chai').expect
 const mock = require('../../mock')
 const authController = require('../../../controllers/auth')
 
-describe('logout auth controllers', function() {
+describe('logout auth controller', function() {
 
   it('clear cookie and send response', async function() {
     const req = new mock.Request(null, await mock.User())
