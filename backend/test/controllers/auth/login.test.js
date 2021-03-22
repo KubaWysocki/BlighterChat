@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const mock = require('../../mock')
 const authController = require('../../../controllers/auth')
 
-describe('login auth controllers', function() {
+describe('login auth controller', function() {
 
   let existingUser
   before(async function() {
@@ -26,8 +26,10 @@ describe('login auth controllers', function() {
     bcrypt.compare.returns(true)
 
     const req = new mock.Request({
-      email: existingUser.email,
-      password: 'Lets say it is a valid password'
+      body: {
+        email: existingUser.email,
+        password: 'Lets say it is a valid password',
+      },
     })
     const res = new mock.Response()
     await authController.login(req, res)
@@ -42,7 +44,7 @@ describe('login auth controllers', function() {
   })
 
   it('should throw error when there is no user with provided email', async function() {
-    const req = new mock.Request({})
+    const req = new mock.Request()
     try {
       await authController.login(req, {})
       throw {}
@@ -57,8 +59,10 @@ describe('login auth controllers', function() {
     bcrypt.compare.returns(false)
 
     const req = new mock.Request({
-      email: existingUser.email,
-      password: 'Not maching password'
+      body: {
+        email: existingUser.email,
+        password: 'Not maching password',
+      },
     })
     try {
       await authController.login(req, {})
