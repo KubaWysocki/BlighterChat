@@ -10,23 +10,30 @@ import * as urls from '../../util/urls'
 import {LS_TOKEN} from '../../util/constants'
 import UserContext from '../../contexts/UserContext'
 import NotificationsContext from '../../contexts/NotificationsContext'
+import FriendRequestsNumberContext from '../../contexts/FriendRequestsNumberContext'
 
 const AppMenu = ({onClear}) => {
   const [user, setUser] = useContext(UserContext)
   const setNotifications = useContext(NotificationsContext)[1]
   const history = useHistory()
   const [anchorEl, setAnchorEl] = useState(null)
-  const [friendRequestsNum, setFriendRequestsNum] = useState(0)
+  const [friendRequestsNum, setFriendRequestsNum] = useContext(FriendRequestsNumberContext)
 
   useEffect(() => {
-    axios.get(api.FRIEND_REQUESTS_NUMBER)
+    const newFriendRequest = () => {
+      if (history.location.pathname !== urls.FRIENDS) {
+        setFriendRequestsNum(num => num + 1)
+      }
+    }
+
+    axios.get(api.NEW_FRIEND_REQUESTS_NUMBER)
       .then(res => {
         setFriendRequestsNum(res.data.friendRequests)
-        socket.get().on('friend-request', data => {
-          setFriendRequestsNum(data.friendRequests)
-        })
+        socket.get().on('friend-request', newFriendRequest)
       })
-  }, [])
+
+    return () => socket.get().off('friend-request', newFriendRequest)
+  }, [history, setFriendRequestsNum])
 
   const handleOpenMenu = (e) => {
     onClear()

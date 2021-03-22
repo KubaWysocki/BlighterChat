@@ -17,8 +17,8 @@ module.exports = {
     io.on('connection', async socket => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '')
       if (cookies.JWT) {
-        const {id} = decodeToken(cookies.JWT)
-        socket.user = await (await User.findOne({id})).execPopulate('chats')
+        const {_id} = decodeToken(cookies.JWT)
+        socket.user = await (await User.findOne({_id})).execPopulate('chats')
         socket.user.chats.forEach(chat => {
           socket.join(chat.slug)
         })
