@@ -1,17 +1,17 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+const {AUTH_EXPIRATION_TIME} = require('../util/constants')
 const User = require('../models/User')
 const ApiError = require('../util/ApiError')
 
-const AUTH_LIFETIME = 48 * 60 * 60 * 1000 //48h
-const COOKIE_OPTIONS = {maxAge: AUTH_LIFETIME, httpOnly: true}
+const COOKIE_OPTIONS = {maxAge: AUTH_EXPIRATION_TIME, httpOnly: true}
 
 function createToken(_id) {
   return jwt.sign(
     {_id},
     process.env.TOKEN_SECRET,
-    {expiresIn: AUTH_LIFETIME},
+    {expiresIn: AUTH_EXPIRATION_TIME},
   )
 }
 

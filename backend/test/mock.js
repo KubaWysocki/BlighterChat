@@ -4,10 +4,13 @@ const faker = require('faker')
 const User = require('../models/User')
 
 class Request {
-  constructor(body, user, cookies) {
-    this.body = body
+  constructor(payload, user) {
+    this.body = {}
+    this.params = {}
+    this.query = {}
+    this.cookies = {}
     this.user = user
-    this.cookies = cookies
+    if (payload) Object.assign(this, payload)
   }
 }
 exports.Request = Request
