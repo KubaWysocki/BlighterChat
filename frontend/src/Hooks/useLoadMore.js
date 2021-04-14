@@ -19,9 +19,11 @@ const useLoadMore = (url, setState, startingPage = 0, query='') => {
   }, [url, setState, query])
 
   useEffect(() => {
-    page.current = startingPage
-    setState([])
-    handleLoadMore()
+    if (startingPage !== 1) {
+      page.current = startingPage
+      setState([])
+      handleLoadMore()
+    }
   }, [startingPage, setState, handleLoadMore])
 
   return [loading, handleLoadMore]

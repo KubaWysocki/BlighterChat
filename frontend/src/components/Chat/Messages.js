@@ -24,7 +24,7 @@ const Messages = ({messages, loadingMessages, onLoadMore}) => {
       onScroll={handleInfiniteScroll}>
       {messages.map((msg, i) =>
         <Box
-          key={i}
+          key={`${loadingMessages}${i}`}
           m={1}
           maxWidth='max-content'
           component={Chip}

@@ -16,7 +16,11 @@ const chatSchema = new Schema({
   }],
   messages: [{
     type: Schema.Types.ObjectId, ref: modelNames.MESSAGE
-  }]
+  }],
+  blocked: {
+    type: Boolean,
+    default: false,
+  }
 }, {timestamps: true})
 
 chatSchema.plugin(URLSlugs('name'))

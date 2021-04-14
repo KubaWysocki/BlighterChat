@@ -27,6 +27,9 @@ exports.sendFriendRequest = async(req, res) => {
   if(newFriend.friends.some(f => req.user._id.equals(f))) {
     throw new ApiError(403, 'User already in friends')
   }
+  if(req.user.friendRequests.some(fr => newFriend._id.equals(fr.user))) {
+    throw new ApiError(409, 'User sent request to you before')
+  }
 
   newFriend.friendRequests.push({user: req.user._id, notify: true})
   await newFriend.save()
@@ -55,7 +58,12 @@ exports.rejectFriendRequest = async(req, res) => {
 
 exports.addFriend = async(req, res) => {
   const {slug} = req.body
-  const newFriend = await User.findOne({slug}).select('username slug friends')
+  await req.user.getFriendRequests({
+    match: {slug},
+    select: 'username slug friends'
+  })
+  const newFriend = req.user.friendRequests[0]?.user
+  if (!newFriend) throw new ApiError(406, 'This user is not on your friend request list')
 
   newFriend.friends.push(req.user)
   await newFriend.save()
@@ -66,6 +74,21 @@ exports.addFriend = async(req, res) => {
   req.user.friendRequests = req.user.friendRequests.filter(fr => !newFriend._id.equals(fr.user._id))
   req.user.friends.push(newFriend)
   await req.user.save()
+
+  await req.user.execPopulate({
+    path: 'chats',
+    match: {
+      users: {
+        $size: 2,
+        $all: [req.user._id, newFriend]
+      }
+    }
+  })
+  const restoredChat = req.user.chats[0]
+  if (restoredChat) {
+    restoredChat.blocked = false
+    restoredChat.save()
+  }
 
   delete newFriend._doc._id
   delete newFriend._doc.__v
@@ -83,6 +106,21 @@ exports.removeFriend = async(req, res) => {
 
   removedFriend.friends = removedFriend.friends.filter(f => !req.user._id.equals(f._id))
   await removedFriend.save()
+
+  await req.user.execPopulate({
+    path: 'chats',
+    match: {
+      users: {
+        $size: 2,
+        $all: [req.user._id, removedFriend._id]
+      }
+    }
+  })
+  const privateChat = req.user.chats[0]
+  if (privateChat) {
+    privateChat.blocked = true
+    await privateChat.save()
+  }
 
   res.status(200).json({slug, isFriend: false})
 }

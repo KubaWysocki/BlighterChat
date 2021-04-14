@@ -36,7 +36,7 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
     }
   }, [activeChatRef, user.slug])
 
-  const handleSetChat = useCallback((chat) => {
+  const handleSetChat = useCallback((chat, withMessages=true) => {
     setNotifications(notifications => {
       const newNotifications = {...notifications}
       delete newNotifications[chat.slug]
@@ -44,7 +44,7 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
     })
     const {messages, ...info} = chat
     setChat(info)
-    setMessages(messages)
+    if (withMessages) setMessages(messages)
     onSetActiveChat(info.slug)
 
     socket.get().on('chat-message', chatMessageCallback)
@@ -56,7 +56,7 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
     if (!chat) {
       axios.get(`${api.GET_CHAT}${params.slug || 'findOrCreate'}${search || ''}`)
         .then(res => {
-          if (res.data.newChat) return setChat(false)
+          if (res.data.newChat) return setChat(true)
 
           handleSetChat(res.data)
         })
@@ -82,12 +82,12 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
   return <>
     <ChatTopBar name={topBarName} otherChatsNotif={chat && Object.keys(notifications).length}/>
     {chat
-      ? <Messages messages={messages} loadingMessages={loadingMessages} onLoadMore={handleLoadMoreMessages}/>
-      : chat === false
-        ? null
-        : <Spinner/>
+      ? <>
+        <Messages messages={messages} loadingMessages={loadingMessages} onLoadMore={handleLoadMoreMessages}/>
+        <ChatInput chat={chat} receiver={receiver} onSetChat={handleSetChat}/>
+      </>
+      : <Spinner/>
     }
-    <ChatInput chat={chat} receiver={receiver} onSetChat={handleSetChat}/>
   </>
 }
 
