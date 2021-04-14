@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {Avatar, Box, Button, Typography} from '@material-ui/core'
 import {Link, useRouteMatch} from 'react-router-dom'
 import {Delete, Done, PersonAdd, Send} from '@material-ui/icons'
@@ -8,12 +8,21 @@ import * as urls from '../../util/urls'
 import axios from '../../util/axios'
 import UserContext from '../../contexts/UserContext'
 import Spinner from '../Spinner/Spinner'
+import ConfrimationDialog from '../ConfirmationDialog/ConfrimationDialog'
+
 
 const Profile = () => {
   const {params} = useRouteMatch('/profile/:slug?')
 
   const [user] = useContext(UserContext)
   const [profile, setProfile] = useState(null)
+  const dialogRef = useRef()
+
+  const handleLoadProfile = useCallback(() => {
+    setProfile(null)
+    axios.get(api.GET_PROFILE + params.slug)
+      .then(res => setProfile(res.data))
+  }, [params.slug])
 
   useEffect(() => {
     if (!params.slug) {
@@ -23,15 +32,16 @@ const Profile = () => {
       setProfile(user)
     }
     else {
-      setProfile(null)
-      axios.get(api.GET_PROFILE + params.slug)
-        .then(res => setProfile(res.data))
+      handleLoadProfile()
     }
-  }, [user, params.slug])
+  }, [user, params.slug, handleLoadProfile])
 
   const handleDeleteFriend = () => {
     axios.delete(api.REMOVE_FRIEND + params.slug)
-      .then((res) => setProfile({...profile, ...res.data}))
+      .then((res) => {
+        setProfile({...profile, ...res.data})
+        dialogRef.current.handleClose()
+      })
   }
 
   const handleAddFriend = (e) => {
@@ -41,12 +51,18 @@ const Profile = () => {
 
   const handleRejectFriend = () => {
     axios.delete(api.REJECT_FRIEND_REQUEST + params.slug)
-      .then(res => setProfile({...profile, ...res.data}))
+      .then(res => {
+        setProfile({...profile, ...res.data})
+        dialogRef.current.handleClose()
+      })
   }
 
   const handleSendFriendRequest = () => {
     axios.put(api.SEND_FRIEND_REQUEST, {slug: params.slug})
       .then(res => setProfile({...profile, ...res.data}))
+      .catch(err => {
+        if (err.request?.status === 409) handleLoadProfile()
+      })
   }
 
   let action = null
@@ -70,7 +86,10 @@ const Profile = () => {
         variant='contained'
         color='secondary'
         startIcon={<Delete/>}
-        onClick={handleDeleteFriend}
+        onClick={() => dialogRef.current.handleOpen({
+          message: `Delete ${profile.username} from friends?`,
+          action: handleDeleteFriend,
+        })}
       >Remove</Button>
     </>
   }
@@ -86,7 +105,10 @@ const Profile = () => {
         variant='contained'
         color='secondary'
         startIcon={<Delete/>}
-        onClick={handleRejectFriend}
+        onClick={() => dialogRef.current.handleOpen({
+          message: `Reject friend request from ${profile.username}?`,
+          action: handleRejectFriend,
+        })}
       >Reject Friend</Button>
     </>
   }
@@ -125,6 +147,7 @@ const Profile = () => {
           <Typography variant='h5'>{profile.email}</Typography>
           {action}
         </Box>
+        <ConfrimationDialog ref={dialogRef}/>
       </>
     }
   </Box>

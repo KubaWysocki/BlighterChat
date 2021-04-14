@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 import {useHistory} from 'react-router-dom'
 import {Box, List, ListSubheader, Typography, Divider} from '@material-ui/core'
 import {Delete, Done, Clear, Send, SentimentVeryDissatisfied} from '@material-ui/icons'
@@ -13,6 +13,7 @@ import UserListItemActions from '../UserListItem/UserListItemActions'
 import LoadMore from '../LoadMore/LoadMore'
 import useLoadMore from '../../Hooks/useLoadMore'
 import FriendRequestsNumberContext from '../../contexts/FriendRequestsNumberContext'
+import ConfrimationDialog from '../ConfirmationDialog/ConfrimationDialog'
 
 
 const Friends = () => {
@@ -20,6 +21,7 @@ const Friends = () => {
   const [friendRequests, setFriendRequests] = useState(null)
   const [friends, setFriends] = useState([])
   const setFriendRequestsNum = useContext(FriendRequestsNumberContext)[1]
+  const dialogRef = useRef()
 
   const [loading, handleLoadMoreFriends] = useLoadMore(api.FRIENDS, setFriends)
 
@@ -55,6 +57,7 @@ const Friends = () => {
         setFriendRequests(
           friendRequests.filter(fr => fr.slug !== res.data.slug)
         )
+        dialogRef.current.handleClose()
       })
   }
 
@@ -68,6 +71,7 @@ const Friends = () => {
         setFriends(
           friends.filter(f => f.slug !== res.data.slug)
         )
+        dialogRef.current.handleClose()
       })
   }
 
@@ -97,7 +101,10 @@ const Friends = () => {
                     },
                     {
                       icon: <Clear color='secondary'/>,
-                      onClick: () => handleDeleteRequest(user.slug)
+                      onClick: () => dialogRef.current.handleOpen({
+                        message: `Reject friend request from ${user.username}?`,
+                        action: () => handleDeleteRequest(user.slug),
+                      }),
                     }
                   ]}
                 />
@@ -124,7 +131,10 @@ const Friends = () => {
                 },
                 {
                   icon: <Delete color='disabled'/>,
-                  onClick: () => handleDeleteFriend(user.slug),
+                  onClick: () => dialogRef.current.handleOpen({
+                    message: `Remove ${user.username} from friends?`,
+                    action: () => handleDeleteFriend(user.slug),
+                  }),
                 }
               ]}
             />
@@ -135,6 +145,7 @@ const Friends = () => {
           onLoadMore={handleLoadMoreFriends}
           empty={!friends?.length && nothingHere}
         />
+        <ConfrimationDialog ref={dialogRef}/>
         <Divider/>
       </ListSubheader>
     </List>

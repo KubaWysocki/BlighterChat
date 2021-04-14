@@ -33,10 +33,11 @@ const userSchema = new Schema({
 
 userSchema.plugin(URLSlugs('username'))
 
-userSchema.methods.getFriendRequests = function() {
+userSchema.methods.getFriendRequests = function(options) {
   return this.execPopulate({
     path: 'friendRequests.user',
-    select: '-_id username email slug'
+    select: '-_id username email slug',
+    ...options,
   })
 }
 

@@ -78,7 +78,7 @@ exports.createChat = async(req, res) => {
     {$push: {chats: chat}}
   )
 
-  await chat.getMessages(req.user._id)
+  await chat.getMessages(req.user._id, 0)
   delete chat._doc._id
   delete chat._doc.__v
 
@@ -125,7 +125,8 @@ exports.postMessage = async(req, res) => {
     })
     chat = req.user.chats[0]
   }
-  if (!chat) throw new ApiError(406, 'Chat not found')
+  if (!chat) throw new ApiError(404, 'Chat not found')
+  if (chat.blocked) throw new ApiError(409, 'Chat is blocked')
 
   const message = await new Message({user: req.user._id, content, readList: [req.user._id]}).save()
   chat.messages.unshift(message)
