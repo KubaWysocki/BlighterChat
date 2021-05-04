@@ -16,8 +16,9 @@ import Profile from './components/Profile/Profile'
 import Navigation from './components/Navigation/Navigation'
 import Spinner from './components/Spinner/Spinner'
 import Friends from './components/Friends/Friends'
-import ChatIcon from './components/ChatIcon/ChatIcon'
+import {ChatIcon, CreateChatIcon} from './components/Icons/Icons'
 import Chat from './components/Chat/Chat'
+import NewChat from './components/Chat/NewChat'
 import Feed from './components/Feed/Feed'
 
 function App() {
@@ -113,12 +114,13 @@ function App() {
         <NotificationsContext.Provider value={notificationsContext}>
           <FriendRequestsNumberContext.Provider value={friendRequestsNumberContext}>
             <Route render={({location}) =>
-              [urls.UNAUTHENTICATED, urls.CHAT].some(url => location.pathname.includes(url))
+              [urls.UNAUTHENTICATED, urls.CHAT, urls.NEW_CHAT].some(url => location.pathname.includes(url))
                 ? null
                 : <>
                   <Navigation/>
-                  {location.pathname !== urls.FEED
-                  && <ChatIcon notifications={Object.keys(notifications).length}/>
+                  {location.pathname === urls.FEED
+                    ? <CreateChatIcon/>
+                    : <ChatIcon notifications={Object.keys(notifications).length}/>
                   }
                 </>
             }/>
@@ -132,11 +134,14 @@ function App() {
           <Route path={urls.PROFILE}>
             <Profile/>
           </Route>
+          <Route path={urls.FEED}>
+            <Feed/>
+          </Route>
           <Route path={urls.CHAT}>
             <Chat activeChatRef={activeChatRef} onSetActiveChat={setActiveChat}/>
           </Route>
-          <Route path={urls.FEED}>
-            <Feed/>
+          <Route path={urls.NEW_CHAT}>
+            <NewChat/>
           </Route>
         </NotificationsContext.Provider>
       </UserContext.Provider>

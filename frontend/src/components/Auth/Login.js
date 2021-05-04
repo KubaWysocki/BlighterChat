@@ -74,7 +74,7 @@ const Login = (props) => {
       helperText={usedErrors.password?.message}
       inputRef={usedRegister(validators.password)}
     />
-    {!props.register && <SubmitButton/>}
+    {!props.register && <SubmitButton text='Login'/>}
   </Box>
 }
 

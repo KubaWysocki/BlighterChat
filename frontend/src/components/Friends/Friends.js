@@ -13,7 +13,8 @@ import UserListItemActions from '../UserListItem/UserListItemActions'
 import LoadMore from '../LoadMore/LoadMore'
 import useLoadMore from '../../Hooks/useLoadMore'
 import FriendRequestsNumberContext from '../../contexts/FriendRequestsNumberContext'
-import ConfrimationDialog from '../ConfirmationDialog/ConfrimationDialog'
+import Confrim from '../Confirm/Confirm'
+import ScrollContainer from '../Generic/ScrollContainer'
 
 
 const Friends = () => {
@@ -80,76 +81,78 @@ const Friends = () => {
       Nothing here <SentimentVeryDissatisfied fontSize='small'/>
     </Box>
 
-  return <Box pt={7}>
+  return <ScrollContainer>
     <List>
       <ListSubheader>
         <Box
+          bgcolor='#282c34'
           align='center'
           component={Typography}
-          variant='h5'>Friend Invitations</Box>
-        <Divider/>
-        {friendRequests === null
-          ? <Box p={1}><Spinner/></Box>
-          : friendRequests.length
-            ? friendRequests.map(user =>
-              <UserListItem key={user.slug} user={user}>
-                <UserListItemActions
-                  actions={[
-                    {
-                      icon: <Done color='primary'/>,
-                      onClick: () => handleAcceptRequest(user.slug)
-                    },
-                    {
-                      icon: <Clear color='secondary'/>,
-                      onClick: () => dialogRef.current.handleOpen({
-                        message: `Reject friend request from ${user.username}?`,
-                        action: () => handleDeleteRequest(user.slug),
-                      }),
-                    }
-                  ]}
-                />
-              </UserListItem>
-            )
-            : nothingHere
-        }
+          variant='h5'
+        >Friend Invitations</Box>
         <Divider/>
       </ListSubheader>
+      {friendRequests === null
+        ? <Box p={1}><Spinner/></Box>
+        : friendRequests.length
+          ? friendRequests.map(user =>
+            <UserListItem key={user.slug} user={user}>
+              <UserListItemActions
+                actions={[
+                  {
+                    icon: <Done color='primary'/>,
+                    onClick: () => handleAcceptRequest(user.slug)
+                  },
+                  {
+                    icon: <Clear color='secondary'/>,
+                    onClick: () => dialogRef.current.handleOpen({
+                      message: `Reject friend request from ${user.username}?`,
+                      action: () => handleDeleteRequest(user.slug),
+                    }),
+                  }
+                ]}
+              />
+            </UserListItem>
+          )
+          : nothingHere
+      }
       <ListSubheader>
+        <Divider/>
         <Box
-          pt={4}
+          bgcolor='#282c34'
           align='center'
           component={Typography}
-          variant='h5'>Friends</Box>
-        <Divider/>
-        {friends.map(user =>
-          <UserListItem key={user.slug} user={user}>
-            <UserListItemActions
-              actions={[
-                {
-                  icon: <Send color='primary'/>,
-                  onClick: () => handleSendMessage(user),
-                },
-                {
-                  icon: <Delete color='disabled'/>,
-                  onClick: () => dialogRef.current.handleOpen({
-                    message: `Remove ${user.username} from friends?`,
-                    action: () => handleDeleteFriend(user.slug),
-                  }),
-                }
-              ]}
-            />
-          </UserListItem>
-        )}
-        <LoadMore
-          loading={loading}
-          onLoadMore={handleLoadMoreFriends}
-          empty={!friends?.length && nothingHere}
-        />
-        <ConfrimationDialog ref={dialogRef}/>
+          variant='h5'
+        >Friends</Box>
         <Divider/>
       </ListSubheader>
+      {friends.map(user =>
+        <UserListItem key={user.slug} user={user}>
+          <UserListItemActions
+            actions={[
+              {
+                icon: <Send color='primary'/>,
+                onClick: () => handleSendMessage(user),
+              },
+              {
+                icon: <Delete color='disabled'/>,
+                onClick: () => dialogRef.current.handleOpen({
+                  message: `Remove ${user.username} from friends?`,
+                  action: () => handleDeleteFriend(user.slug),
+                }),
+              }
+            ]}
+          />
+        </UserListItem>
+      )}
+      <LoadMore
+        loading={loading}
+        onLoadMore={handleLoadMoreFriends}
+        empty={!friends?.length && nothingHere}
+      />
+      <Confrim ref={dialogRef}/>
     </List>
-  </Box>
+  </ScrollContainer>
 }
 
 export default Friends

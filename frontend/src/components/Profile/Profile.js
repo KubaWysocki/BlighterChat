@@ -8,7 +8,7 @@ import * as urls from '../../util/urls'
 import axios from '../../util/axios'
 import UserContext from '../../contexts/UserContext'
 import Spinner from '../Spinner/Spinner'
-import ConfrimationDialog from '../ConfirmationDialog/ConfrimationDialog'
+import Confrim from '../Confirm/Confirm'
 
 
 const Profile = () => {
@@ -87,7 +87,7 @@ const Profile = () => {
         color='secondary'
         startIcon={<Delete/>}
         onClick={() => dialogRef.current.handleOpen({
-          message: `Delete ${profile.username} from friends?`,
+          message: `Remove ${profile.username} from friends?`,
           action: handleDeleteFriend,
         })}
       >Remove</Button>
@@ -147,7 +147,7 @@ const Profile = () => {
           <Typography variant='h5'>{profile.email}</Typography>
           {action}
         </Box>
-        <ConfrimationDialog ref={dialogRef}/>
+        <Confrim ref={dialogRef}/>
       </>
     }
   </Box>

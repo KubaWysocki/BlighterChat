@@ -4,12 +4,12 @@ import {useHistory} from 'react-router-dom'
 import * as urls from '../../util/urls'
 
 
-const UserListItem = ({user, onClick, children}) => {
+const UserListItem = ({user, onClick, withoutLink, children}) => {
   const history = useHistory()
 
   const handleClick = () => {
     if (onClick) onClick()
-    history.push(urls.PROFILE + user.slug)
+    if (!withoutLink) history.push(urls.PROFILE + user.slug)
   }
 
   return <Box

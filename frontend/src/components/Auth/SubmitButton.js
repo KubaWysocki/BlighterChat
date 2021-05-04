@@ -1,14 +1,14 @@
 import {Box, Button} from '@material-ui/core'
 
 
-const SubmitButton = ({isSignup}) =>
+const SubmitButton = ({text}) =>
   <Box my={4} display='flex' justifyContent='center'>
     <Button
       type='submit'
       color='primary'
       variant='contained'
     >
-      {isSignup ? 'Signup' : 'Login'}
+      {text}
     </Button>
   </Box>
 

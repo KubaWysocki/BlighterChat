@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useHistory} from 'react-router-dom'
-import {Paper, Box, List, ListItem, Typography} from '@material-ui/core'
+import {Paper, List, Typography, ListSubheader} from '@material-ui/core'
 import {Send} from '@material-ui/icons'
 
 import * as api from '../../util/api'
@@ -9,6 +9,7 @@ import useLoadMore from '../../Hooks/useLoadMore'
 import UserListItem from '../UserListItem/UserListItem'
 import UserListItemActions from '../UserListItem/UserListItemActions'
 import LoadMore from '../LoadMore/LoadMore'
+import ScrollContainer from '../Generic/ScrollContainer'
 
 
 const SearchList = ({search, onClear}) => {
@@ -21,30 +22,30 @@ const SearchList = ({search, onClear}) => {
   const [loadingFriends, handleLoadMoreFriends] = useLoadMore(api.FRIENDS, setFriends, 0, query)
   const [loadingUsers, handleLoadMoreUsers] = useLoadMore(api.GET_USERS, setUsers, 0, query)
 
-  return <Box
+  return <ScrollContainer
     component={Paper}
-    width={1}
-    mt={6}
-    position='absolute'
-    display='flex'
-    flexDirection='column'
+    position='relative'
     zIndex='tooltip'>
     <List dense>
-      <Box component={ListItem}>
-        <Typography variant='subtitle1'>Friends:</Typography>
-      </Box>
-      {friends.map(user =>
-        <UserListItem key={user.slug} user={user} onClick={onClear}>
-          <UserListItemActions
-            actions={[
-              {
-                icon: <Send color='primary'/>,
-                onClick: () => history.push(`${urls.CHAT}?receiver=${user.slug}`, {name: user.username}),
-              }
-            ]}
-          />
-        </UserListItem>
-      )}
+      <ListSubheader>
+        <Paper component={Typography} variant='subtitle1' elevation={0} square>
+          Friends:
+        </Paper>
+      </ListSubheader>
+      <List>
+        {friends.map(user =>
+          <UserListItem key={user.slug} user={user} onClick={onClear}>
+            <UserListItemActions
+              actions={[
+                {
+                  icon: <Send color='primary'/>,
+                  onClick: () => history.push(`${urls.CHAT}?receiver=${user.slug}`, {name: user.username}),
+                }
+              ]}
+            />
+          </UserListItem>
+        )}
+      </List>
       <LoadMore
         loading={loadingFriends}
         onLoadMore={handleLoadMoreFriends}
@@ -52,12 +53,16 @@ const SearchList = ({search, onClear}) => {
           !friends?.length && <Typography variant='body2' align='center'>Friends not found</Typography>
         }
       />
-      <Box component={ListItem}>
-        <Typography variant='subtitle1'>Users:</Typography>
-      </Box>
-      {users.map(user =>
-        <UserListItem key={user.slug} user={user} onClick={onClear}/>
-      )}
+      <ListSubheader>
+        <Paper component={Typography} variant='subtitle1' elevation={0} square>
+          Users:
+        </Paper>
+      </ListSubheader>
+      <List>
+        {users.map(user =>
+          <UserListItem key={user.slug} user={user} onClick={onClear}/>
+        )}
+      </List>
       <LoadMore
         loading={loadingUsers}
         onLoadMore={handleLoadMoreUsers}
@@ -66,7 +71,7 @@ const SearchList = ({search, onClear}) => {
         }
       />
     </List>
-  </Box>
+  </ScrollContainer>
 }
 
 export default SearchList
