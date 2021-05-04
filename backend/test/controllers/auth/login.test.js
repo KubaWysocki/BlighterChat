@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const mock = require('../../mock')
-const authController = require('../../../controllers/auth')
+const {login} = require('../../../controllers/auth')
 
 describe('login auth controller', function() {
 
@@ -32,7 +32,7 @@ describe('login auth controller', function() {
       },
     })
     const res = new mock.Response()
-    await authController.login(req, res)
+    await login(req, res)
 
     expect(res.status.calledOnceWithExactly(202)).to.be.true
     expect(res.cookie.calledOnceWith('JWT', 'token')).to.be.true
@@ -46,7 +46,7 @@ describe('login auth controller', function() {
   it('should throw error when there is no user with provided email', async function() {
     const req = new mock.Request()
     try {
-      await authController.login(req, {})
+      await login(req, {})
       throw {}
     }
     catch(e) {
@@ -65,7 +65,7 @@ describe('login auth controller', function() {
       },
     })
     try {
-      await authController.login(req, {})
+      await login(req, {})
       throw {}
     }
     catch(e) {

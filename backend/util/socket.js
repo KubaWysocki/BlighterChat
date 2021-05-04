@@ -35,7 +35,7 @@ module.exports = {
     return io
   },
   getActiveConnection: (user, callback) => {
-    if (!io) throw ApiError(500, 'Socket not initialized')
+    if (!io) throw new ApiError(500, 'Socket not initialized')
     const activeConnections = io.sockets.sockets //Map
     let socket = null
     for (let [key, value] of activeConnections) {
