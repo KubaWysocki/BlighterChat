@@ -1,7 +1,7 @@
 const expect = require('chai').expect
 
 const mock = require('../../mock')
-const userController = require('../../../controllers/user')
+const {getProfile} = require('../../../controllers/user')
 
 describe('getProfile user controller', function() {
   let usersWhoAreFriends
@@ -33,7 +33,7 @@ describe('getProfile user controller', function() {
     }, user0SentRequestToUser1[0])
     const res = new mock.Response()
 
-    await userController.getProfile(req, res)
+    await getProfile(req, res)
 
     expect(res.status.calledOnceWithExactly(200)).to.be.true
     expect(res.json.firstCall.args[0].slug).to.equal(usersWhoAreFriends[0].slug)
@@ -48,7 +48,7 @@ describe('getProfile user controller', function() {
     }, usersWhoAreFriends[1])
     const res = new mock.Response()
 
-    await userController.getProfile(req, res)
+    await getProfile(req, res)
 
     expect(res.status.calledOnceWithExactly(200)).to.be.true
     expect(res.json.firstCall.args[0].slug).to.equal(usersWhoAreFriends[0].slug)
@@ -63,7 +63,7 @@ describe('getProfile user controller', function() {
     }, user0SentRequestToUser1[0])
     const res = new mock.Response()
 
-    await userController.getProfile(req, res)
+    await getProfile(req, res)
 
     expect(res.status.calledOnceWithExactly(200)).to.be.true
     expect(res.json.firstCall.args[0].slug).to.equal(user0SentRequestToUser1[1].slug)
@@ -78,7 +78,7 @@ describe('getProfile user controller', function() {
     }, user0SentRequestToUser1[1])
     const res = new mock.Response()
 
-    await userController.getProfile(req, res)
+    await getProfile(req, res)
 
     expect(res.status.calledOnceWithExactly(200)).to.be.true
     expect(res.json.firstCall.args[0].slug).to.equal(user0SentRequestToUser1[0].slug)
@@ -93,7 +93,7 @@ describe('getProfile user controller', function() {
     }, user0SentRequestToUser1[1])
     const res = new mock.Response()
     try {
-      await userController.getProfile(req, res)
+      await getProfile(req, res)
       throw {}
     }
     catch(e) {

@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const mock = require('../../mock')
-const authController = require('../../../controllers/auth')
+const {signup} = require('../../../controllers/auth')
 const User = require('../../../models/User')
 
 describe('signup auth controller', function() {
@@ -38,7 +38,7 @@ describe('signup auth controller', function() {
         password: 'password',
       },
     })
-    await authController.signup(req, res)
+    await signup(req, res)
 
     expect(bcrypt.hash.calledOnce).to.equal(true)
     expect(jwt.sign.calledOnce).to.equal(true)
@@ -69,7 +69,7 @@ describe('signup auth controller', function() {
       },
     })
 
-    await authController.signup(req, res)
+    await signup(req, res)
 
     const new_user = await User.findOne({email: req.body.email})
     expect(new_user).to.have.property('slug', 'tester-2')
@@ -82,7 +82,7 @@ describe('signup auth controller', function() {
       },
     })
     try {
-      await authController.signup(req, {})
+      await signup(req, {})
       throw {}
     }
     catch(e) {
@@ -94,7 +94,7 @@ describe('signup auth controller', function() {
   it('should throw error when missing data', async function() {
     const req = new mock.Request()
     try {
-      await authController.signup(req, {})
+      await signup(req, {})
       throw {}
     }
     catch(e) {

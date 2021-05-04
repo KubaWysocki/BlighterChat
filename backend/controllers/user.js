@@ -21,13 +21,13 @@ exports.sendFriendRequest = async(req, res) => {
   const {slug} = req.body
   const newFriend = await User.findOne({slug})
 
-  if(newFriend.friendRequests.some(r => req.user._id.equals(r))) {
+  if (newFriend.friendRequests.some(fr => req.user._id.equals(fr.user._id))) {
     throw new ApiError(403, 'Friend request already sent')
   }
-  if(newFriend.friends.some(f => req.user._id.equals(f))) {
+  if (newFriend.friends.some(f => req.user._id.equals(f._id))) {
     throw new ApiError(403, 'User already in friends')
   }
-  if(req.user.friendRequests.some(fr => newFriend._id.equals(fr.user))) {
+  if (req.user.friendRequests.some(fr => newFriend._id.equals(fr.user._id))) {
     throw new ApiError(409, 'User sent request to you before')
   }
 

@@ -3,7 +3,7 @@ const sinon = require('sinon')
 const jwt = require('jsonwebtoken')
 
 const mock = require('../../mock')
-const authController = require('../../../controllers/auth')
+const {autoLogin} = require('../../../controllers/auth')
 
 describe('autoLogin auth controller', function() {
 
@@ -13,7 +13,7 @@ describe('autoLogin auth controller', function() {
 
     const req = new mock.Request(null, await mock.User())
     const res = new mock.Response()
-    await authController.autoLogin(req, res)
+    await autoLogin(req, res)
 
     expect(res.status.calledOnceWithExactly(202)).to.be.true
     expect(res.cookie.calledOnceWith('JWT', 'token')).to.be.true
