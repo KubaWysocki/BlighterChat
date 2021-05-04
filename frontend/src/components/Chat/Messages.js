@@ -28,9 +28,14 @@ const Messages = ({messages, loadingMessages, onLoadMore}) => {
           m={1}
           maxWidth='max-content'
           component={Chip}
-          alignSelf={user.slug === msg.user.slug ? 'flex-end' : 'flex-start'}
+          variant={msg.user ? 'default' : 'outlined'}
+          alignSelf={
+            msg.user
+              ? user.slug === msg.user.slug ? 'flex-end' : 'flex-start'
+              : 'center'
+          }
           label={<Box p={1}>{msg.content}</Box>}
-          avatar={user.slug === msg.user.slug ? null : <Avatar>{msg.user.username[0]}</Avatar>}
+          avatar={!msg.user || user.slug === msg.user.slug ? null : <Avatar>{msg.user.username[0]}</Avatar>}
         />
       )}
       {loadingMessages && <Box height={50}><Spinner/></Box>}

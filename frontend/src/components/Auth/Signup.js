@@ -68,7 +68,7 @@ const Signup = ({onInitIO}) => {
         validate: value => value === watch('password') || 'Passwords must match'
       })}
     />
-    <SubmitButton isSignup/>
+    <SubmitButton text='Signup'/>
   </Box>
 }
 

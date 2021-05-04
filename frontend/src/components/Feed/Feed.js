@@ -8,6 +8,7 @@ import UserContext from '../../contexts/UserContext'
 import NotificationsContext from '../../contexts/NotificationsContext'
 import LoadMore from '../LoadMore/LoadMore'
 import useLoadMore from '../../Hooks/useLoadMore'
+import ScrollContainer from '../Generic/ScrollContainer'
 
 const Feed = () => {
   const [user] = useContext(UserContext)
@@ -21,8 +22,7 @@ const Feed = () => {
     history.push(`${urls.CHAT}/${slug}`, {name})
   }
 
-  return <Box
-    mt={6}>
+  return <ScrollContainer>
     <List>
       {feed.map(chat => {
         let chatName
@@ -33,8 +33,8 @@ const Feed = () => {
         let wasRead = !notify && chat.messages[0].readList.some(u => u.username === user.username)
 
         let lastMessage = notify && notify[notify.length - 1]?.content
-          ? notify[notify.length - 1].content
-          : chat.messages[0].content
+          ? notify[notify.length - 1]
+          : chat.messages[0]
 
         return <Fragment key={chat.slug}>
           <Box
@@ -46,7 +46,7 @@ const Feed = () => {
             </ListItemAvatar>
             <Box>
               <Typography variant='subtitle1'>{chatName}</Typography>
-              <Typography variant={wasRead ? 'caption' : 'subtitle2'}>{lastMessage}</Typography>
+              <Typography variant={wasRead ? 'caption' : 'subtitle2'}>{lastMessage.user && lastMessage.content}</Typography>
             </Box>
             <Box ml='auto'>
               <Badge badgeContent={notify?.length} color='secondary'/>
@@ -57,7 +57,7 @@ const Feed = () => {
       })}
       <LoadMore loading={loading} onLoadMore={handleLoadMoreFeed}/>
     </List>
-  </Box>
+  </ScrollContainer>
 }
 
 export default Feed

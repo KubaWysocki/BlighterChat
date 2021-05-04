@@ -6,7 +6,7 @@ const initData = {
   action: () => null
 }
 
-const ConfrimationDialog = forwardRef((props, ref) => {
+const Confrim = forwardRef((props, ref) => {
   const [open, setOpen] = useState(false)
   const [data, setData] = useState(initData)
 
@@ -36,4 +36,4 @@ const ConfrimationDialog = forwardRef((props, ref) => {
   </Dialog>
 })
 
-export default ConfrimationDialog
+export default Confrim

@@ -42,7 +42,7 @@ exports.getChat = async(req, res) => {
 
 exports.createChat = async(req, res) => {
   const {chatName, slugs, content} = req.body
-  if (!content) throw ApiError(406, 'Message can not be empty')
+  if (slugs.length === 1 && !content) throw ApiError(406, 'Message can not be empty')
 
   const receivers = slugs?.length && await User.find({
     _id: {$in: req.user.friends},
@@ -64,8 +64,11 @@ exports.createChat = async(req, res) => {
     throw ApiError(406, 'Group chats have to have a name')
   }
 
-  const message = new Message({user: req.user._id, content, readList: []})
+  let message
+  if (content) message = new Message({user: req.user._id, content})
+  else message = new Message({content: 'Chat created'})
   await message.save()
+
   const allChatUsers = receivers.concat(req.user)
   const chat = await new Chat({
     name: isGroupChat ? chatName : `${req.user.slug}-${receivers[0].slug}`,

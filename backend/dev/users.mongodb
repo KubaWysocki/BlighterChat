@@ -1,0 +1,20 @@
+//create 10 users all with the same password and simmilar emails
+use('blighterChat')
+
+db.users.drop();
+
+const usernames = ['Kuba', 'Michasia', 'Ola', 'Dawid', 'Pawel', 'Rafal', 'Bartek', 'Igor', 'Julka', 'Halina']
+
+const password = '$2a$12$MYFjgytbETXAF.EqhBW3/.GDh8TLzJgIbaMuq4n2N9SS5/VqaPgYi' //qwerty78
+
+const users = usernames.map((username, i) => ({
+    email: `dev${i}@dev.com`,
+    slug: username.toLowerCase(),
+    friends: [],
+    friendRequests: [],
+    chats: [],
+    username,
+    password,
+}))
+
+db.users.insertMany(users);
