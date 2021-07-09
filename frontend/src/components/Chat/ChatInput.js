@@ -53,6 +53,9 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
           placeholder='Start typing a message'
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyUp={(e) => {
+            if (e.key === 'Enter') handleSendMessage()
+          }}
           InputProps={{
             startAdornment:
               <InputAdornment position="start">

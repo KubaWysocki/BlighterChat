@@ -1,11 +1,9 @@
-import {useContext} from 'react'
-import {Box, Chip, Avatar} from '@material-ui/core'
+import {Box} from '@material-ui/core'
 
-import UserContext from '../../contexts/UserContext'
+import Message from './Message'
 import Spinner from '../Spinner/Spinner'
 
 const Messages = ({messages, loadingMessages, onLoadMore}) => {
-  const [user] = useContext(UserContext)
 
   const handleInfiniteScroll = ({target}) => {
     if (-target.scrollTop + target.clientHeight >= target.scrollHeight
@@ -22,20 +20,10 @@ const Messages = ({messages, loadingMessages, onLoadMore}) => {
       flexDirection='column-reverse'
       overflow='auto'
       onScroll={handleInfiniteScroll}>
-      {messages.map((msg, i) =>
-        <Box
+      {messages.map((message, i) =>
+        <Message
           key={`${loadingMessages}${i}`}
-          m={1}
-          maxWidth='max-content'
-          component={Chip}
-          variant={msg.user ? 'default' : 'outlined'}
-          alignSelf={
-            msg.user
-              ? user.slug === msg.user.slug ? 'flex-end' : 'flex-start'
-              : 'center'
-          }
-          label={<Box p={1}>{msg.content}</Box>}
-          avatar={!msg.user || user.slug === msg.user.slug ? null : <Avatar>{msg.user.username[0]}</Avatar>}
+          message={message}
         />
       )}
       {loadingMessages && <Box height={50}><Spinner/></Box>}

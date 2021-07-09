@@ -28,7 +28,7 @@ const SearchList = ({search, onClear}) => {
     zIndex='tooltip'>
     <List dense>
       <ListSubheader>
-        <Paper component={Typography} variant='subtitle1' elevation={0} square>
+        <Paper component={Typography} elevation={0} square>
           Friends:
         </Paper>
       </ListSubheader>
@@ -54,7 +54,7 @@ const SearchList = ({search, onClear}) => {
         }
       />
       <ListSubheader>
-        <Paper component={Typography} variant='subtitle1' elevation={0} square>
+        <Paper component={Typography} elevation={0} square>
           Users:
         </Paper>
       </ListSubheader>
