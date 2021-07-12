@@ -2,20 +2,21 @@ const express = require('express')
 const {param, body} = require('express-validator')
 
 const resolveValidation = require('../util/resolveValidation')
+const {usernameSlugRegex} = require('../util/validators')
 const userController = require('../controllers/user')
 
 const router = express.Router()
 
 router.get(
   '/profile/:slug',
-  param('slug').isSlug(),
+  param('slug').matches(usernameSlugRegex).isSlug(),
   resolveValidation,
   userController.getProfile
 )
 
 router.put(
   '/send-friend-request',
-  body('slug').isSlug(),
+  body('slug').matches(usernameSlugRegex).isSlug(),
   resolveValidation,
   userController.sendFriendRequest
 )
@@ -27,21 +28,21 @@ router.get(
 
 router.delete(
   '/reject-friend-request/:slug',
-  param('slug').isSlug(),
+  param('slug').matches(usernameSlugRegex).isSlug(),
   resolveValidation,
   userController.rejectFriendRequest
 )
 
 router.put(
   '/add-friend',
-  body('slug').isSlug(),
+  body('slug').matches(usernameSlugRegex).isSlug(),
   resolveValidation,
   userController.addFriend
 )
 
 router.delete(
   '/remove-friend/:slug',
-  param('slug').isSlug(),
+  param('slug').matches(usernameSlugRegex).isSlug(),
   resolveValidation,
   userController.removeFriend
 )
