@@ -54,7 +54,7 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
 
   useEffect(() => {
     if (!chat) {
-      axios.get(`${api.GET_CHAT}${params.slug || 'findOrCreate'}${search || ''}`)
+      axios.get(`${api.GET_CHAT}${params.slug || ''}${search || ''}`)
         .then(res => {
           if (res.data.newChat) return setChat(true)
 
