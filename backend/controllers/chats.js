@@ -8,10 +8,9 @@ const isLastPage = require('../util/isLastPage')
 
 exports.getChat = async(req, res) => {
   const {slug} = req.params
+  let {receiver} = req.query
 
-  const {receiver} = req.query
-  let recipient
-  if (receiver) recipient = await User.findOne({slug: receiver})
+  if (receiver) receiver = await User.findOne({slug: receiver})
 
   await req.user.execPopulate({
     path: 'chats',
@@ -22,7 +21,7 @@ exports.getChat = async(req, res) => {
         {
           users: {
             $size: 2,
-            $all: [req.user._id, recipient?._id]
+            $all: [req.user._id, receiver?._id]
           }
         }
       ]
