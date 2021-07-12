@@ -17,7 +17,7 @@ router.get(
 router.get(
   '/friends/:page',
   param('page').isNumeric().toInt(),
-  query('search').isAlphanumeric(),
+  query('search').isAlphanumeric().optional(),
   resolveValidation,
   usersSetController.getFriends
 )
