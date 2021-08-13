@@ -31,7 +31,7 @@ router.put(
       body('slugs').isArray({min: 2}),
     ],
     [
-      body('content').notEmpty().isAlphanumeric(),
+      body('content').notEmpty(),
       body('slugs').isArray({max: 1}),
     ]
   ], 'Invalid chat creation data'),

@@ -23,7 +23,11 @@ const chatSchema = new Schema({
   }
 }, {timestamps: true})
 
-chatSchema.plugin(URLSlugs('name'))
+chatSchema.plugin(
+  URLSlugs('name', {generator: (text) =>
+    text.toLowerCase().replace(/^[-_~]([^a-z0-9\-_~]+)[-_~]$/g, '')}
+  )
+)
 
 chatSchema.methods.getMessages = async function(userId, page) {
   await Message.updateMany({_id: {$in: this.messages}}, {$addToSet: {readList: userId}})

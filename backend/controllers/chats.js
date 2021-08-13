@@ -70,7 +70,7 @@ exports.createChat = async(req, res) => {
 
   const allChatUsers = receivers.concat(req.user)
   const chat = await new Chat({
-    name: isGroupChat ? chatName : `${req.user.slug}-${receivers[0].slug}`,
+    name: isGroupChat ? chatName : `${req.user.slug}~${receivers[0].slug}`,
     users: allChatUsers,
     messages: [message._id]
   }).save()

@@ -73,10 +73,10 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
     if (routeState?.name) return routeState.name
     else if (chat) {
       if (chat.users.length > 2) return chat.name
-      else return chat.users.find(u => u.username !== user.username).username
+      else return chat.users.find(u => u.slug !== user.slug).username
     }
     else return receiver
-  }, [chat, receiver, routeState?.name, user.username])
+  }, [chat, receiver, routeState?.name, user.slug])
 
   return <>
     <ChatTopBar name={topBarName} otherChatsNotif={chat && Object.keys(notifications).length}/>
