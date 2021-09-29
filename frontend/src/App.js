@@ -8,7 +8,6 @@ import {LS_TOKEN} from './util/constants'
 import UserContext from './contexts/UserContext'
 import NotificationsContext from './contexts/NotificationsContext'
 import FriendRequestsNumberContext from './contexts/FriendRequestsNumberContext'
-import initNotifications from './util/initNotifications'
 import socket from './util/socket'
 
 import Auth from './components/Auth/Auth'
@@ -41,25 +40,27 @@ function App() {
   const handleInitIO = useCallback(() => {
     const io = socket.init()
 
-    io.on('chat-message', data => {
-      const {chatSlug, message} = data
+    io.on('chat-message', chat => {
 
-      if (activeChatRef.current === chatSlug) return //oposite case handled in /src/components/Chat/Chat.js
+      if (activeChatRef.current === chat.slug) return //oposite case handled in /src/components/Chat/Chat.js
 
       setNotifications((notifications) => {
-        if (!notifications[chatSlug]) {
+        if (!notifications[chat.slug]) {
           return {
             ...notifications,
-            [chatSlug]: [message]
+            [chat.slug]: chat
           }
         }
         else {
           return {
             ...notifications,
-            [chatSlug]: [
-              ...notifications[chatSlug],
-              message
-            ]
+            [chat.slug]: {
+              ...chat,
+              messages: [
+                ...chat.messages,
+                ...notifications[chat.slug].messages,
+              ]
+            }
           }
         }
       })
@@ -88,7 +89,7 @@ function App() {
 
         return axios.get(api.NOTIFICATIONS_COUNT)
           .then(res => {
-            setNotifications(initNotifications(res.data))
+            setNotifications(res.data)
 
             handleInitIO()
 
@@ -120,7 +121,7 @@ function App() {
                   <Navigation/>
                   {location.pathname === urls.FEED
                     ? <CreateChatIcon/>
-                    : <ChatIcon notifications={Object.keys(notifications).length}/>
+                    : <ChatIcon notificationsNumber={Object.keys(notifications).length}/>
                   }
                 </>
             }/>

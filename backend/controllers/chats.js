@@ -84,7 +84,14 @@ exports.createChat = async(req, res) => {
   delete chat._doc._id
   delete chat._doc.__v
 
-  await message.execPopulate('user', '-__v -_id -chats -friendRequests -friends -email')
+  await message.execPopulate([{
+    path: 'user',
+    select: '-__v -_id -chats -friendRequests -friends -email'
+  }, {
+    path: 'readList',
+    select: '-__v -_id -chats -friendRequests -friends -email'
+  }])
+
   delete message._doc.__v
 
   chat.users.forEach(user => {
@@ -93,7 +100,7 @@ exports.createChat = async(req, res) => {
     })
   })
 
-  ioInstance.get().to(chat.slug).emit('chat-message', {chatSlug: chat.slug, message})
+  ioInstance.get().to(chat.slug).emit('chat-message', chat._doc)
 
   res.status(201).json(chat)
 }
@@ -139,11 +146,19 @@ exports.postMessage = async(req, res) => {
     select: '-__v -_id -chats -friendRequests -friends -email'
   }, {
     path: 'readList',
-    select: '-_id username'
+    select: '-__v -_id -chats -friendRequests -friends -email'
   }])
   delete message._doc.__v
 
-  ioInstance.get().to(chat.slug).emit('chat-message', {chatSlug, message})
+  await chat.execPopulate({
+    path: 'users',
+    select: '-__v -_id -chats -friendRequests -friends -email'
+  })
+
+  delete chat._doc._id
+  delete chat._doc.__v
+
+  ioInstance.get().to(chat.slug).emit('chat-message', {...chat._doc, messages: [message]})
 
   res.status(200).json({slug: chat.slug})
 }

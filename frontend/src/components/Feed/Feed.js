@@ -1,4 +1,4 @@
-import {useState, useContext, Fragment} from 'react'
+import {useState, useContext, Fragment, useEffect} from 'react'
 import {useHistory} from 'react-router-dom'
 import {Box, List, ListItem, ListItemAvatar, Avatar, Typography, Badge, Divider} from '@material-ui/core'
 
@@ -22,6 +22,27 @@ const Feed = () => {
     history.push(`${urls.CHAT}/${slug}`, {name})
   }
 
+  useEffect(() => {
+    if (!loading) {
+      setFeed(feed => {
+        const notificationWithoutChat = Object.keys(notifications).find(chatSlug =>
+          !feed.some(chat => chat.slug === chatSlug)
+        )
+        if (notificationWithoutChat) {
+          return [
+            notifications[notificationWithoutChat],
+            ...feed
+          ]
+        }
+        else {
+          return feed
+            .map(chat => notifications[chat.slug] ? notifications[chat.slug] : chat)
+            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        }
+      })
+    }
+  }, [notifications, loading])
+
   return <ScrollContainer>
     <List>
       {feed.map(chat => {
@@ -29,11 +50,11 @@ const Feed = () => {
         if(chat.users.length !== 2) chatName = chat.name
         else chatName = chat.users.find(u => u.username !== user.username).username
 
-        let notify = notifications[chat.slug]
-        let wasRead = !notify && chat.messages[0].readList.some(u => u.username === user.username)
+        let notify = notifications[chat.slug]?.messages
+        let wasRead = !notify && chat.messages[0].readList.some(u => u.slug === user.slug)
 
-        let lastMessage = notify && notify[notify.length - 1]?.content
-          ? notify[notify.length - 1]
+        let lastMessage = notify && notify[0]?.content
+          ? notify[0]
           : chat.messages[0]
 
         return <Fragment key={chat.slug}>
