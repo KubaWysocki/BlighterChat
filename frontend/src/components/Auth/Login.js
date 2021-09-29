@@ -8,7 +8,6 @@ import * as urls from '../../util/urls'
 import * as api from '../../util/api'
 import * as validators from '../../util/validators'
 import {LS_TOKEN} from '../../util/constants'
-import initNotifications from '../../util/initNotifications'
 import UserContext from '../../contexts/UserContext'
 import NotificationsContext from '../../contexts/NotificationsContext'
 import SubmitButton from './SubmitButton'
@@ -33,7 +32,7 @@ const Login = (props) => {
 
         axios.get(api.NOTIFICATIONS_COUNT)
           .then(res => {
-            setNotifications(initNotifications(res.data))
+            setNotifications(res.data)
             history.push(urls.FEED)
           })
       })

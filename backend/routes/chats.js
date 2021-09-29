@@ -2,7 +2,7 @@ const express = require('express')
 const {param, query, body, oneOf} = require('express-validator')
 
 const resolveValidation = require('../util/resolveValidation')
-const {chatNameSlugRegex, usernameSlugRegex} = require('../util/validators')
+const {usernameSlugRegex} = require('../util/validators')
 const chatsController = require('../controllers/chats')
 
 const router = express.Router()
@@ -16,7 +16,7 @@ router.get(
     ],
     [
       query('receiver').isEmpty(),
-      param('slug').matches(chatNameSlugRegex).isSlug(),
+      param('slug').isSlug(),
     ]
   ], 'Invalid chat slug, reciever or both provided'),
   resolveValidation,
@@ -27,7 +27,7 @@ router.put(
   '/create-chat',
   oneOf([
     [
-      body('chatName').matches(chatNameSlugRegex).isLength({min: 3, max: 20}),
+      body('chatName').isLength({min: 3, max: 20}),
       body('slugs').isArray({min: 2}),
     ],
     [
@@ -42,7 +42,7 @@ router.put(
 
 router.get(
   '/more-messages/:slug/:page',
-  param('slug').matches(chatNameSlugRegex).isSlug(),
+  param('slug').isSlug(),
   param('page').isNumeric().toInt(),
   resolveValidation,
   chatsController.getMoreMessages
@@ -50,8 +50,8 @@ router.get(
 
 router.post(
   '/send-message',
-  body('chatSlug').matches(chatNameSlugRegex).isSlug(),
-  body('content').notEmpty().isAlphanumeric(),
+  body('chatSlug').isSlug(),
+  body('content').notEmpty(),
   resolveValidation,
   chatsController.postMessage
 )

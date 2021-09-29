@@ -49,7 +49,6 @@ const NewChat = () => {
     if (selected.length === 1) return undefined
     else if (val.length < 3) return 'Chat name too short'
     else if (val.length > 20) return 'Chat name too long'
-    else if (!/^(?!_)(?!.*_{2})[a-zA-Z0-9_]+(?<![_])$/.test(val)) return 'Invalid characters'
   }, [selected])
 
   const createChat = ({selected, chatName}) => {

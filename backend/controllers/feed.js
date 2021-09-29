@@ -14,16 +14,16 @@ exports.getFeed = async(req, res) => {
       perDocumentLimit: 1,
       populate: [{
         path: 'user',
-        select: '-_id username'
+        select: '-__v -_id -chats -friendRequests -friends -emaile'
       },
       {
         path: 'readList',
-        select: '-_id username'
+        select: '-__v -_id -chats -friendRequests -friends -email'
       }]
     },
     {
       path: 'users',
-      select: '-_id username'
+      select: '-__v -_id -chats -friendRequests -friends -email'
     }],
     options: {
       sort: '-updatedAt',
@@ -41,7 +41,7 @@ exports.notificationsCount = async(req, res) => {
   await req.user.execPopulate({
     path: 'chats',
     select: '-_id -__v',
-    populate: {
+    populate: [{
       path: 'messages',
       select: '-_id -__v',
       match: {
@@ -49,10 +49,14 @@ exports.notificationsCount = async(req, res) => {
           $ne: req.user._id
         }
       }
-    }
+    },
+    {
+      path: 'users',
+      select: '-__v -_id -chats -friendRequests -friends -email',
+    }]
   })
   const result = {}
-  req.user.chats.forEach(chat => chat.messages.length && (result[chat.slug] = chat.messages.length))
+  req.user.chats.forEach(chat => chat.messages.length && (result[chat.slug] = chat))
 
   res.status(200).json(result)
 }

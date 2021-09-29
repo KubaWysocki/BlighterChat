@@ -15,11 +15,11 @@ export const BottomRightCorner = ({to, children}) =>
     </Box>
   </Link>
 
-export const ChatIcon = ({notifications}) =>
+export const ChatIcon = ({notificationsNumber}) =>
   <BottomRightCorner to={urls.FEED}>
     <Badge
       color='secondary'
-      badgeContent={notifications}
+      badgeContent={notificationsNumber}
       overlap='circle'>
       <Box p={3} component={Avatar}>
         <QuestionAnswerRounded fontSize='large'/>

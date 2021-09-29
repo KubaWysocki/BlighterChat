@@ -31,10 +31,14 @@ chatSchema.methods.getMessages = async function(userId, page) {
   return this.execPopulate({
     path: 'messages',
     select: '-_id -__v',
-    populate: {
+    populate: [{
       path: 'user',
       select: '-__v -_id -chats -friendRequests -friends -email'
     },
+    {
+      path: 'readList',
+      select: '-__v -_id -chats -friendRequests -friends -email'
+    }],
     options: {
       sort: '-timestamp',
       skip: Number(page) * pageSizes.MESSAGES,

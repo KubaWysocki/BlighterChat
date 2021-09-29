@@ -26,13 +26,12 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
 
   const [loadingMessages, handleLoadMoreMessages] = useLoadMore(`${api.MORE_MESSAGES}/${params.slug}`, setMessages, 1)
 
-  const chatMessageCallback = useCallback(data => {
-    const {chatSlug, message} = data
-    if (activeChatRef.current !== chatSlug) return //oposite case handled in /src/App.js
-
-    setMessages(messages => [message, ...messages])
-    if (message.user.slug !== user.slug) {
-      axios.post(api.MESSAGE_READ, {_id: message._id})
+  const chatMessageCallback = useCallback(chat => {
+    if (activeChatRef.current !== chat.slug) return //oposite case handled in /src/App.js
+    const newMessage = chat.messages[0]
+    setMessages(messages => [newMessage, ...messages])
+    if (newMessage.user.slug !== user.slug) {
+      axios.post(api.MESSAGE_READ, {_id: newMessage._id})
     }
   }, [activeChatRef, user.slug])
 
