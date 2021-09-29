@@ -20,7 +20,7 @@ module.exports = {
       'never'
     ],
     'no-console': 'warn',
-    'no-extra-parens': 'error',
+    'no-extra-parens': ['error', 'all', {nestedBinaryExpressions: false}],
     'no-multi-spaces': 'error',
     'no-trailing-spaces': 'error',
     'no-unused-vars': 'warn',

@@ -48,10 +48,12 @@ const Feed = () => {
       {feed.map(chat => {
         let chatName
         if(chat.users.length !== 2) chatName = chat.name
-        else chatName = chat.users.find(u => u.username !== user.username).username
+        else chatName = chat.users.find(u => u.slug !== user.slug).username
 
         let notify = notifications[chat.slug]?.messages
-        let wasRead = !notify && chat.messages[0].readList.some(u => u.slug === user.slug)
+        let wasRead = chat.messages[0].user?.slug === user.slug
+          || (!notify && chat.messages[0].readList.some(u => u.slug === user.slug))
+
 
         let lastMessage = notify && notify[0]?.content
           ? notify[0]

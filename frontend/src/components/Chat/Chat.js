@@ -13,7 +13,7 @@ import ChatTopBar from './ChatTopBar'
 import Spinner from '../Spinner/Spinner'
 import useLoadMore from '../../Hooks/useLoadMore'
 
-const Chat = ({activeChatRef, onSetActiveChat}) => {
+const Chat = ({activeChatSlugRef, setActiveChatSlug}) => {
   const [user] = useContext(UserContext)
   const [notifications, setNotifications] = useContext(NotificationsContext)
   const history = useHistory()
@@ -27,13 +27,20 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
   const [loadingMessages, handleLoadMoreMessages] = useLoadMore(`${api.MORE_MESSAGES}/${params.slug}`, setMessages, 1)
 
   const chatMessageCallback = useCallback(chat => {
-    if (activeChatRef.current !== chat.slug) return //oposite case handled in /src/App.js
+    if (activeChatSlugRef.current !== chat.slug) return //oposite case handled in /src/App.js
     const newMessage = chat.messages[0]
     setMessages(messages => [newMessage, ...messages])
     if (newMessage.user.slug !== user.slug) {
-      axios.post(api.MESSAGE_READ, {_id: newMessage._id})
+      axios.post(api.MESSAGE_READ, {_id: newMessage._id, chatSlug: activeChatSlugRef.current})
     }
-  }, [activeChatRef, user.slug])
+  }, [activeChatSlugRef, user.slug])
+
+  const messageReadCallback = useCallback(message => {
+    setMessages(messages => messages.map(msg => msg._id === message._id
+      ? {...msg, ...message}
+      : msg
+    ))
+  }, [])
 
   const handleSetChat = useCallback((chat, withMessages=true) => {
     setNotifications(notifications => {
@@ -44,12 +51,13 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
     const {messages, ...info} = chat
     setChat(info)
     if (withMessages) setMessages(messages)
-    onSetActiveChat(info.slug)
+    setActiveChatSlug(info.slug)
 
     socket.get().on('chat-message', chatMessageCallback)
+    socket.get().on('message-read', messageReadCallback)
 
     history.replace(`${urls.CHAT}/${chat.slug}`)
-  }, [history, setNotifications, onSetActiveChat, chatMessageCallback])
+  }, [history, setNotifications, setActiveChatSlug, chatMessageCallback, messageReadCallback])
 
   useEffect(() => {
     if (!chat) {
@@ -64,19 +72,20 @@ const Chat = ({activeChatRef, onSetActiveChat}) => {
 
   useEffect(() => {
     return () => {
-      onSetActiveChat(null)
+      setActiveChatSlug(null)
       socket.get().off('chat-message', chatMessageCallback)
+      socket.get().off('message-read', messageReadCallback)
     }
-  }, [onSetActiveChat, chatMessageCallback])
+  }, [setActiveChatSlug, chatMessageCallback, messageReadCallback])
 
   const topBarName = useMemo(() => {
     if (routeState?.name) return routeState.name
     else if (chat) {
       if (chat.users.length > 2) return chat.name
-      else return chat.users.find(u => u.username !== user.username).username
+      else return chat.users.find(u => u.slug !== user.slug).username
     }
     else return receiver
-  }, [chat, receiver, routeState?.name, user.username])
+  }, [chat, receiver, routeState?.name, user.slug])
 
   return <>
     <ChatTopBar name={topBarName} otherChatsNotif={chat && Object.keys(notifications).length}/>
