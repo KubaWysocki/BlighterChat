@@ -72,7 +72,7 @@ exports.createChat = async(req, res) => {
   const chat = await new Chat({
     name: isGroupChat ? chatName : `${req.user.slug}~${receivers[0].slug}`,
     users: allChatUsers,
-    messages: [message._id]
+    messages: [message]
   }).save()
 
   await User.updateMany(
@@ -80,7 +80,6 @@ exports.createChat = async(req, res) => {
     {$push: {chats: chat}}
   )
 
-  await chat.getMessages(req.user._id, 0)
   delete chat._doc._id
   delete chat._doc.__v
 
@@ -137,7 +136,7 @@ exports.postMessage = async(req, res) => {
   if (!chat) throw new ApiError(404, 'Chat not found')
   if (chat.blocked) throw new ApiError(409, 'Chat is blocked')
 
-  const message = await new Message({user: req.user._id, content, readList: [req.user._id]}).save()
+  const message = await new Message({user: req.user._id, content}).save()
   chat.messages.unshift(message)
   await chat.save()
 
@@ -164,7 +163,40 @@ exports.postMessage = async(req, res) => {
 }
 
 exports.messageRead = async(req, res) => {
-  const {_id} = req.body
-  await Message.updateOne({_id}, {$addToSet: {readList: req.user._id}})
+  const {_id, chatSlug} = req.body
+
+  await req.user.execPopulate({
+    path: 'chats',
+    match: {slug: chatSlug},
+    populate: {
+      path: 'messages',
+      match: {_id}
+    }
+  })
+
+  let message = req.user.chats[0].messages[0]
+
+  if (!message) throw new ApiError(400, 'Chat or message not found')
+
+  message = await Message.findOneAndUpdate(
+    {
+      _id,
+      user: {$ne: req.user._id}
+    },
+    {$addToSet: {readList: req.user._id}},
+    {new: true}
+  )
+
+  await message.execPopulate([{
+    path: 'user',
+    select: '-__v -_id -chats -friendRequests -friends -email'
+  },
+  {
+    path: 'readList',
+    select: '-__v -_id -chats -friendRequests -friends -email'
+  }])
+
+  ioInstance.get().to(chatSlug).emit('message-read', message._doc)
+
   res.status(200).json({})
 }

@@ -1,9 +1,11 @@
+import {useState} from 'react'
 import {Box} from '@material-ui/core'
 
 import Message from './Message'
 import Spinner from '../Spinner/Spinner'
 
 const Messages = ({messages, loadingMessages, onLoadMore}) => {
+  const [activeMessageId, setActiveMessageId] = useState(null)
 
   const handleInfiniteScroll = ({target}) => {
     if (-target.scrollTop + target.clientHeight >= target.scrollHeight
@@ -22,8 +24,10 @@ const Messages = ({messages, loadingMessages, onLoadMore}) => {
       onScroll={handleInfiniteScroll}>
       {messages.map((message, i) =>
         <Message
+          active={message._id === activeMessageId}
           key={`${loadingMessages}${i}`}
           message={message}
+          setActiveId={setActiveMessageId}
         />
       )}
       {loadingMessages && <Box height={50}><Spinner/></Box>}

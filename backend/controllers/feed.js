@@ -47,6 +47,9 @@ exports.notificationsCount = async(req, res) => {
       match: {
         readList: {
           $ne: req.user._id
+        },
+        user: {
+          $ne: req.user._id
         }
       }
     },

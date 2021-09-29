@@ -24,9 +24,9 @@ function App() {
   const userContext = useState(null)
   const setUser = userContext[1]
 
-  const activeChatRef = useRef(null)
-  const setActiveChat = useCallback(data => {
-    activeChatRef.current = data
+  const activeChatSlugRef = useRef(null)
+  const setActiveChatSlug = useCallback(data => {
+    activeChatSlugRef.current = data
   }, [])
 
   const notificationsContext = useState({})
@@ -42,7 +42,7 @@ function App() {
 
     io.on('chat-message', chat => {
 
-      if (activeChatRef.current === chat.slug) return //oposite case handled in /src/components/Chat/Chat.js
+      if (activeChatSlugRef.current === chat.slug) return //oposite case handled in /src/components/Chat/Chat.js
 
       setNotifications((notifications) => {
         if (!notifications[chat.slug]) {
@@ -139,7 +139,7 @@ function App() {
             <Feed/>
           </Route>
           <Route path={urls.CHAT}>
-            <Chat activeChatRef={activeChatRef} onSetActiveChat={setActiveChat}/>
+            <Chat activeChatSlugRef={activeChatSlugRef} setActiveChatSlug={setActiveChatSlug}/>
           </Route>
           <Route path={urls.NEW_CHAT}>
             <NewChat/>
