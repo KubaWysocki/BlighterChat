@@ -61,7 +61,7 @@ chatSchema.methods.getMessages = async function(userId, page) {
     ioInstance.get().to(this.slug).emit('message-read', msg)
   })
 
-  return this.execPopulate({
+  return this.populate({
     path: 'messages',
     select: '-__v',
     populate: messagesPopulate,
