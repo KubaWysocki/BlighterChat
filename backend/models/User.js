@@ -34,7 +34,7 @@ const userSchema = new Schema({
 userSchema.plugin(URLSlugs('username'))
 
 userSchema.methods.getFriendRequests = function(options) {
-  return this.execPopulate({
+  return this.populate({
     path: 'friendRequests.user',
     select: '-_id username email slug',
     ...options,

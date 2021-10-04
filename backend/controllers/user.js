@@ -75,7 +75,7 @@ exports.addFriend = async(req, res) => {
   req.user.friends.push(newFriend)
   await req.user.save()
 
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     match: {
       users: {
@@ -107,7 +107,7 @@ exports.removeFriend = async(req, res) => {
   removedFriend.friends = removedFriend.friends.filter(f => !req.user._id.equals(f._id))
   await removedFriend.save()
 
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     match: {
       users: {

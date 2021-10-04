@@ -44,7 +44,7 @@ exports.getFriends = async(req, res) => {
       ...query,
       _id: {$in: req.user.friends}
     }),
-    req.user.execPopulate({
+    req.user.populate({
       path: 'friends',
       select: '-_id username slug',
       match: {...query},

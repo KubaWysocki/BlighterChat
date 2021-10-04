@@ -12,7 +12,7 @@ exports.getChat = async(req, res) => {
 
   if (receiver) receiver = await User.findOne({slug: receiver})
 
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     select: '-__v -_id',
     match: {
@@ -32,7 +32,7 @@ exports.getChat = async(req, res) => {
   if (!chat) return res.status(200).json({newChat: true})
 
   await chat.getMessages(req.user._id, 0)
-  await chat.execPopulate('users', '-__v -_id -chats -friendRequests -friends -email')
+  await chat.populate('users', '-__v -_id -chats -friendRequests -friends -email')
   delete chat._doc._id
   delete chat._doc.__v
 
@@ -83,7 +83,7 @@ exports.createChat = async(req, res) => {
   delete chat._doc._id
   delete chat._doc.__v
 
-  await message.execPopulate([{
+  await message.populate([{
     path: 'user',
     select: '-__v -_id -chats -friendRequests -friends -email'
   }, {
@@ -106,7 +106,7 @@ exports.createChat = async(req, res) => {
 
 exports.getMoreMessages = async(req, res) => {
   const {slug, page} = req.params
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     select: '-__v -_id',
     match: {slug},
@@ -127,7 +127,7 @@ exports.postMessage = async(req, res) => {
 
   let chat
   if (chatSlug) {
-    await req.user.execPopulate({
+    await req.user.populate({
       path: 'chats',
       match: {slug: chatSlug}
     })
@@ -140,7 +140,7 @@ exports.postMessage = async(req, res) => {
   chat.messages.unshift(message)
   await chat.save()
 
-  await message.execPopulate([{
+  await message.populate([{
     path: 'user',
     select: '-__v -_id -chats -friendRequests -friends -email'
   }, {
@@ -149,7 +149,7 @@ exports.postMessage = async(req, res) => {
   }])
   delete message._doc.__v
 
-  await chat.execPopulate({
+  await chat.populate({
     path: 'users',
     select: '-__v -_id -chats -friendRequests -friends -email'
   })
@@ -165,7 +165,7 @@ exports.postMessage = async(req, res) => {
 exports.messageRead = async(req, res) => {
   const {_id, chatSlug} = req.body
 
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     match: {slug: chatSlug},
     populate: {
@@ -187,7 +187,7 @@ exports.messageRead = async(req, res) => {
     {new: true}
   )
 
-  await message.execPopulate([{
+  await message.populate([{
     path: 'user',
     select: '-__v -_id -chats -friendRequests -friends -email'
   },

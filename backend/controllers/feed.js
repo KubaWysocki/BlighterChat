@@ -4,7 +4,7 @@ const isLastPage = require('../util/isLastPage')
 exports.getFeed = async(req, res) => {
   const {page} = req.params
   const total = req.user.chats.length
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     select: '-_id -__v',
     populate: [{
@@ -38,7 +38,7 @@ exports.getFeed = async(req, res) => {
 }
 
 exports.notificationsCount = async(req, res) => {
-  await req.user.execPopulate({
+  await req.user.populate({
     path: 'chats',
     select: '-_id -__v',
     populate: [{
