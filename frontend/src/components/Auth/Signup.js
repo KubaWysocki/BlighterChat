@@ -14,7 +14,7 @@ import Login from './Login'
 import SubmitButton from './SubmitButton'
 
 const Signup = ({onInitIO}) => {
-  const {register, watch, errors, setError, handleSubmit} = useForm()
+  const {register, watch, formState: {errors}, setError, handleSubmit} = useForm()
   const history = useHistory()
   const setUser = useContext(UserContext)[1]
 
@@ -34,6 +34,11 @@ const Signup = ({onInitIO}) => {
       })
   }
 
+  const {usernameRef, ...usernameRest} = register('username', validators.username)
+  const {confirmPasswordRef, ...confirmPasswordRest} = register('confirmPassword', {
+    validate: value => value === watch('password') || 'Passwords must match'
+  })
+
   return <Box
     component='form'
     mx='auto'
@@ -50,7 +55,8 @@ const Signup = ({onInitIO}) => {
       placeholder='example_user'
       error={!!errors.username}
       helperText={errors.username?.message}
-      inputRef={register(validators.username)}
+      inputRef={usernameRef}
+      {...usernameRest}
     />
     <Login
       register={register}
@@ -64,9 +70,8 @@ const Signup = ({onInitIO}) => {
       placeholder='N0t5o0bv10u5Pa55word'
       error={!!errors.confirmPassword}
       helperText={errors.confirmPassword?.message}
-      inputRef={register({
-        validate: value => value === watch('password') || 'Passwords must match'
-      })}
+      inputRef={confirmPasswordRef}
+      {...confirmPasswordRest}
     />
     <SubmitButton text='Signup'/>
   </Box>

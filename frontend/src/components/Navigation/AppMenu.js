@@ -58,7 +58,7 @@ const AppMenu = ({onClear}) => {
       invisible={!!anchorEl || friendRequestsNum === 0}
       badgeContent={friendRequestsNum}
       color='secondary'
-      overlap='circle'
+      overlap='circular'
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'left',
