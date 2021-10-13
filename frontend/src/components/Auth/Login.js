@@ -14,7 +14,7 @@ import SubmitButton from './SubmitButton'
 
 
 const Login = (props) => {
-  const {register, errors, handleSubmit, setError} = useForm()
+  const {register, formState: {errors}, handleSubmit, setError} = useForm()
   const history = useHistory()
   const setUser = useContext(UserContext)[1]
   const setNotifications = useContext(NotificationsContext)[1]
@@ -44,6 +44,9 @@ const Login = (props) => {
       })
   }
 
+  const {emailRef, ...emailRest} = usedRegister('email', validators.email)
+  const {passwordRef, ...passwordRest} = usedRegister('password', validators.password)
+
   return <Box
     component={props.register ? 'div' : 'form'}
     mx='auto'
@@ -53,25 +56,25 @@ const Login = (props) => {
   >
     <TextField
       autoFocus={!props.register}
-      name='email'
       type='email'
       label='Email'
       margin='normal'
       placeholder='example@mail.com'
       error={!!usedErrors.email}
       helperText={usedErrors.email?.message}
-      inputRef={usedRegister(validators.email)}
+      ref={emailRef}
+      {...emailRest}
     />
     <br/>
     <TextField
-      name='password'
       type='password'
       label='Password'
       margin='normal'
       placeholder='N0t5o0bv10u5Pa55w0rd'
       error={!!usedErrors.password}
       helperText={usedErrors.password?.message}
-      inputRef={usedRegister(validators.password)}
+      inputRef={passwordRef}
+      {...passwordRest}
     />
     {!props.register && <SubmitButton text='Login'/>}
   </Box>

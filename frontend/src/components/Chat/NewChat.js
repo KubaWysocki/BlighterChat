@@ -25,7 +25,7 @@ const NewChat = () => {
 
   const [loadingFriends, handleLoadMoreFriends] = useLoadMore(api.FRIENDS, setFriends, 0, query)
 
-  const {register, errors, handleSubmit, setValue, watch} = useForm({
+  const {register, formState: {errors}, handleSubmit, setValue, watch} = useForm({
     defaultValues: {selected: []}
   })
 
@@ -64,6 +64,8 @@ const NewChat = () => {
       })
   }
 
+  const {chatNameRef, chatNameRest} = register('chatName', {validate: validateChatName})
+
   return <>
     <ChatTopBar name={debouncedName || 'New Chat'}/>
     <ScrollContainer
@@ -81,7 +83,8 @@ const NewChat = () => {
         margin='dense'
         error={!!errors.chatName}
         helperText={errors.chatName?.message}
-        inputRef={register({validate: validateChatName})}
+        inputRef={chatNameRef}
+        {...chatNameRest}
       />
       <Box component={List} display='flex' overflow='auto' minHeight='6em'>
         {selected.map(user =>

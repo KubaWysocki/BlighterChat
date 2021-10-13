@@ -20,7 +20,7 @@ export const ChatIcon = ({notificationsNumber}) =>
     <Badge
       color='secondary'
       badgeContent={notificationsNumber}
-      overlap='circle'>
+      overlap='circular'>
       <Box p={3} component={Avatar}>
         <QuestionAnswerRounded fontSize='large'/>
       </Box>
