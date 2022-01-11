@@ -8,7 +8,7 @@ exports.getUsers = async(req, res) => {
   const {search} = req.query
   const query = {
     username: {
-      $regex: search,
+      $regex: `^${search}`,
       $options: 'i'
     },
     _id: {$nin: req.user.friends.concat(req.user._id)}
@@ -34,7 +34,7 @@ exports.getFriends = async(req, res) => {
   const {search} = req.query
   const query = {
     username: {
-      $regex: search || '',
+      $regex: search ? `^${search}`: '',
       $options: 'i'
     }
   }
