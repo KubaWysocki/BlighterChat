@@ -64,7 +64,7 @@ const NewChat = () => {
       })
   }
 
-  const {chatNameRef, chatNameRest} = register('chatName', {validate: validateChatName})
+  const {chatNameRef, ...chatNameRest} = register('chatName', {validate: validateChatName})
 
   return <>
     <ChatTopBar name={debouncedName || 'New Chat'}/>

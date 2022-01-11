@@ -31,17 +31,7 @@ app.use(cors({
   credentials: true
 }))
 
-app.use(authRoutes)
-
-app.use(isAuth)
-
-app.use(userRoutes)
-app.use(userSetRoutes)
-
-app.use(chatRoutes)
-app.use(feedRoutes)
-
-app.use(errorHandler)
+app.use('/api', authRoutes, isAuth, userRoutes, userSetRoutes, chatRoutes, feedRoutes, errorHandler)
 
 mongoose.connect(MONGO_DB_URI)
   .then(() => {
