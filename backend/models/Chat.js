@@ -25,9 +25,10 @@ const chatSchema = new Schema({
 }, {timestamps: true})
 
 chatSchema.plugin(
-  URLSlugs('name', {generator: (text) =>
-    text.toLowerCase().replace(/^[-_~]([^a-z0-9\-_~]+)[-_~]$/g, '')}
-  )
+  URLSlugs('name', {generator: (text) => {
+    const result = text.toLowerCase().replace(/[^a-z0-9]/g, '')
+    return result.length ? result : 'chat'
+  }})
 )
 
 chatSchema.methods.getMessages = async function(userId, page) {
