@@ -9,6 +9,7 @@ import NotificationsContext from '../../contexts/NotificationsContext'
 import LoadMore from '../LoadMore/LoadMore'
 import useLoadMore from '../../Hooks/useLoadMore'
 import ScrollContainer from '../Generic/ScrollContainer'
+import {CreateChatIcon} from '../Icons/Icons'
 
 const Feed = () => {
   const [user] = useContext(UserContext)
@@ -43,8 +44,8 @@ const Feed = () => {
     }
   }, [notifications, loading])
 
-  return <ScrollContainer>
-    <List>
+  return <ScrollContainer height={1} width={1}>
+    <Box component={List} height={1}>
       {feed.map(chat => {
         let chatName
         if(chat.users.length !== 2) chatName = chat.name
@@ -79,7 +80,8 @@ const Feed = () => {
         </Fragment>
       })}
       <LoadMore loading={loading} onLoadMore={handleLoadMoreFeed}/>
-    </List>
+      <CreateChatIcon/>
+    </Box>
   </ScrollContainer>
 }
 

@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useHistory} from 'react-router-dom'
-import {Paper, List, Typography, ListSubheader} from '@material-ui/core'
+import {Paper, List, Typography, ListSubheader, Box} from '@material-ui/core'
 import {Send} from '@material-ui/icons'
 
 import * as api from '../../util/api'
@@ -9,7 +9,6 @@ import useLoadMore from '../../Hooks/useLoadMore'
 import UserListItem from '../UserListItem/UserListItem'
 import UserListItemActions from '../UserListItem/UserListItemActions'
 import LoadMore from '../LoadMore/LoadMore'
-import ScrollContainer from '../Generic/ScrollContainer'
 
 
 const SearchList = ({search, onClear}) => {
@@ -22,9 +21,13 @@ const SearchList = ({search, onClear}) => {
   const [loadingFriends, handleLoadMoreFriends] = useLoadMore(api.FRIENDS, setFriends, 0, query)
   const [loadingUsers, handleLoadMoreUsers] = useLoadMore(api.GET_USERS, setUsers, 0, query)
 
-  return <ScrollContainer
+  return <Box
     component={Paper}
-    position='relative'
+    position='absolute'
+    width={1}
+    maxHeight='calc(100% - 48px)'
+    mt={6}
+    overflow="auto"
     zIndex='tooltip'>
     <List dense>
       <ListSubheader>
@@ -42,6 +45,7 @@ const SearchList = ({search, onClear}) => {
                   onClick: () => history.push(`${urls.CHAT}?receiver=${user.slug}`, {name: user.username}),
                 }
               ]}
+              onClick={onClear}
             />
           </UserListItem>
         )}
@@ -71,7 +75,7 @@ const SearchList = ({search, onClear}) => {
         }
       />
     </List>
-  </ScrollContainer>
+  </Box>
 }
 
 export default SearchList

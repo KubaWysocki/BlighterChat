@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 require('express-async-errors')
 const bodyParser = require('body-parser')
@@ -27,11 +28,17 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'http://laptop-m3aehvfp:8000',
   credentials: true
 }))
 
+app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')))
+
 app.use('/api', authRoutes, isAuth, userRoutes, userSetRoutes, chatRoutes, feedRoutes, errorHandler)
+
+app.use((_, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'))
+})
 
 mongoose.connect(MONGO_DB_URI)
   .then(() => {

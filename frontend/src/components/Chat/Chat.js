@@ -56,7 +56,7 @@ const Chat = ({activeChatSlugRef, setActiveChatSlug}) => {
     socket.get().on('chat-message', chatMessageCallback)
     socket.get().on('message-read', messageReadCallback)
 
-    history.replace(`${urls.CHAT}/${chat.slug}`)
+    history.replace(`${urls.CHAT}/${chat.slug}`, {doNotRefetchChat: true})
   }, [history, setNotifications, setActiveChatSlug, chatMessageCallback, messageReadCallback])
 
   useEffect(() => {
@@ -69,6 +69,14 @@ const Chat = ({activeChatSlugRef, setActiveChatSlug}) => {
         })
     }
   }, [chat, search, params.slug, handleSetChat])
+
+  useEffect(() => {
+    if(!history.location.state?.doNotRefetchChat) {
+      setChat(null)
+      socket.get().off('chat-message', chatMessageCallback)
+      socket.get().off('message-read', messageReadCallback)
+    }
+  }, [params.slug, history, chatMessageCallback, messageReadCallback])
 
   useEffect(() => {
     return () => {

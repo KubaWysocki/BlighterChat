@@ -80,7 +80,7 @@ exports.addFriend = async(req, res) => {
     match: {
       users: {
         $size: 2,
-        $all: [req.user._id, newFriend]
+        $all: [req.user._id, newFriend._id]
       }
     }
   })

@@ -4,10 +4,11 @@
   "main": "app.js",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon --exec 'npm run lint && node' -L app.js -e js,ejs",
-    "lint": "./node_modules/.bin/eslint --fix ./",
+    "start": "nodemon --exec 'npm run lint && node' -L app.js",
+    "lint": "npx eslint --fix ./",
     "mongo": "sudo service mongodb",
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "prod": "node app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
