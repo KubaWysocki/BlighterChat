@@ -35,6 +35,7 @@ const Message = ({message, active, setActiveId}) => {
       ? user.slug === message.user.slug ? 'flex-end' : 'flex-start'
       : 'center'
     }
+    my={1}
   >
     {time}
     {sender}

@@ -13,7 +13,7 @@ const ChatTopBar = ({name, otherChatsNotif}) =>
     display='flex'
     alignItems='center'
     justifyContent='space-between'
-    zIndex='tooltip'>
+  >
     <IconButton component={Link} to={urls.FEED}>
       <Badge
         badgeContent={otherChatsNotif ? otherChatsNotif : 0}

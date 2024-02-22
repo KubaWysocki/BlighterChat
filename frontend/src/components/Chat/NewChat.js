@@ -12,7 +12,6 @@ import useDebounce from '../../Hooks/useDebounce'
 import useLoadMore from '../../Hooks/useLoadMore'
 import UserListItem from '../UserListItem/UserListItem'
 import LoadMore from '../LoadMore/LoadMore'
-import ScrollContainer from '../Generic/ScrollContainer'
 
 
 const NewChat = () => {
@@ -68,12 +67,14 @@ const NewChat = () => {
 
   return <>
     <ChatTopBar name={debouncedName || 'New Chat'}/>
-    <ScrollContainer
+    <Box
       px={4}
+      pt={6}
       height={1}
       display='flex'
       flexDirection='column'
       justifyContent='space-around'
+      overflow="auto"
       component='form'
       onSubmit={handleSubmit(createChat)}>
       <TextField
@@ -86,7 +87,7 @@ const NewChat = () => {
         inputRef={chatNameRef}
         {...chatNameRest}
       />
-      <Box component={List} display='flex' overflow='auto' minHeight='6em'>
+      <Box component={List} display='flex' overflow='auto' minHeight='6.6em'>
         {selected.map(user =>
           <Box
             key={user.slug}
@@ -120,7 +121,7 @@ const NewChat = () => {
             </InputAdornment>
         }}
       />
-      <Box component={List} overflow='auto' maxHeight={.7}>
+      <Box component={List} overflow='auto' height={.5}>
         {friends.map(user =>
           <UserListItem
             key={user.slug}
@@ -156,7 +157,7 @@ const NewChat = () => {
           Create chat
         </Fab>
       </Box>
-    </ScrollContainer>
+    </Box>
   </>
 }
 

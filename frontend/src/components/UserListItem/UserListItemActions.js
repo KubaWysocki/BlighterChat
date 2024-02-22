@@ -1,15 +1,15 @@
 import {Box, IconButton} from '@material-ui/core'
 
 
-const UserListItemActions = ({actions}) =>
-  <Box ml='auto'>
-    {actions.map(action =>
+const UserListItemActions = ({actions, onClick}) =>
+  <Box ml='auto' onClick={(e) => {
+    e.stopPropagation()
+    onClick && onClick()
+  }}>
+    {actions.map((action, i) =>
       <IconButton
-        key={action.icon.type.displayName}
-        onClick={e => {
-          e.stopPropagation()
-          action.onClick()
-        }}>
+        key={i}
+        onClick={() => action.onClick()}>
         {action.icon}
       </IconButton>
     )}

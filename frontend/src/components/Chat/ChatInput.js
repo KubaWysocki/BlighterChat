@@ -7,9 +7,11 @@ import * as api from '../../util/api'
 
 const ChatInput = ({chat, receiver, onSetChat}) => {
   const [message, setMessage] = useState('')
+  const [isSending, setIsSending] = useState(false)
 
   const handleSendMessage = () => {
-    if (!message) return
+    if (!message || isSending) return
+    setIsSending(true)
 
     if (chat === true) {
       axios.put(api.CREATE_CHAT, {
@@ -19,6 +21,7 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
         .then(res => {
           onSetChat(res.data)
           setMessage('')
+          setIsSending(false)
         })
     }
     else {
@@ -26,7 +29,10 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
         chatSlug: chat.slug,
         content: message
       })
-        .then(() => setMessage(''))
+        .then(() => {
+          setMessage('')
+          setIsSending(false)
+        })
         .catch(err => {
           if (err.response.status === 409) onSetChat({...chat, blocked: true}, false)
         })
@@ -64,7 +70,7 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
           }}
         />
         <Box pl={1} onClick={handleSendMessage}>
-          <SendRounded color={message.length ? 'primary' : 'disabled'} fontSize='large'/>
+          <SendRounded color={message.length && !isSending ? 'primary' : 'disabled'} fontSize='large'/>
         </Box>
       </>
     }

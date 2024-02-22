@@ -81,8 +81,8 @@ const Friends = () => {
       Nothing here <SentimentVeryDissatisfied fontSize='small'/>
     </Box>
 
-  return <ScrollContainer>
-    <List>
+  return <ScrollContainer mt={6}>
+    <List overflow="scroll">
       <ListSubheader>
         <Box
           bgcolor='#282c34'

@@ -9,7 +9,7 @@ module.exports = {
   init: server => {
     io = require('socket.io')(server, {
       cors: {
-        origin: 'http://localhost:3000',
+        origin: 'http://laptop-m3aehvfp:3000',
         credentials: true
       }
     })

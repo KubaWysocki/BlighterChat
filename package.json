@@ -1,0 +1,24 @@
+{
+  "name": "blighterchat",
+  "version": "1.0.0",
+  "description": "chat app",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run mongo start --workspace=backend && concurrently --kill-others \"npm start --workspace=frontend\" \"npm start --workspace=backend\"",
+    "serve": "npm run mongo start --workspace=backend && npm run prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KubaWysocki/BlighterChat.git"
+  },
+  "author": "Kuba Wysocki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KubaWysocki/BlighterChat/issues"
+  },
+  "homepage": "https://github.com/KubaWysocki/BlighterChat#readme",
+  "workspaces": [
+    "./frontend",
+    "./backend"
+  ]
+}
