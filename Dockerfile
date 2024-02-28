@@ -12,6 +12,6 @@ RUN npm run build
 
 WORKDIR /app/backend
 
-CMD ["node", "app.js"]
+CMD ["pm2", "start", "app.js"]
 
 EXPOSE 8000

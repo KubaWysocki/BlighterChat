@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react'
-import {useHistory} from 'react-router'
+import {useHistory} from 'react-router-dom'
 import {useForm} from 'react-hook-form'
 import {Avatar, Box, Checkbox, Fab, InputAdornment, List, ListItem, TextField, Typography} from '@material-ui/core'
 import {Add, Cancel, Search} from '@material-ui/icons'
