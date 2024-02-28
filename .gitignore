@@ -24,3 +24,5 @@ yarn-error.log*
 
 backend/.env
 frontend/build
+
+*.pem
