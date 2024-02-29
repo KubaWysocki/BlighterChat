@@ -22,7 +22,7 @@ services:
     environment:
       MONGO_DB_URI: mongo
     ports:
-      - "8000:8000"
+      - "80:8000"
     networks:
       - MONGO
     depends_on:
