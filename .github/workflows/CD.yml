@@ -18,15 +18,10 @@ jobs:
           port: 22
           command_timeout: 30m
           script: |
-            export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh
             cd /home/ubuntu/BlighterChat &&
             git checkout master &&
             git fetch --all &&
             git reset --hard origin/master &&
             git pull origin master &&
-            npm i &&
-            cd frontend &&
-            npm run build &&
-            cd ../ &&
-            docker-compose up -d
+            docker-compose down &&
+            docker-compose up -d --build --force-recreate --no-deps express
