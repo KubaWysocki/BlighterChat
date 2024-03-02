@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState, useRef} from 'react'
+import React, {useCallback, useEffect, useState, useRef} from 'react'
 import {Switch, Route, useHistory} from 'react-router-dom'
 
 import axios from './util/axios'
@@ -20,8 +20,6 @@ import Chat from './components/Chat/Chat'
 import NewChat from './components/Chat/NewChat'
 import Feed from './components/Feed/Feed'
 import {Box, Divider, useMediaQuery} from '@material-ui/core'
-
-//test 2
 
 function App() {
   const userContext = useState(null)
