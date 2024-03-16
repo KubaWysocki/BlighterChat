@@ -1,5 +1,6 @@
 import {Box, IconButton} from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import React from 'react'
 
 import Spinner from '../Spinner/Spinner'
 

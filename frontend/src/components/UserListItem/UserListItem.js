@@ -1,5 +1,6 @@
 import {Box, ListItem, ListItemAvatar, Avatar} from '@material-ui/core'
 import {useHistory} from 'react-router-dom'
+import React from 'react'
 
 import * as urls from '../../util/urls'
 
