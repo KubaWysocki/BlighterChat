@@ -1,4 +1,4 @@
-import {useContext, useState, useEffect} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import {Link, useHistory} from 'react-router-dom'
 import {Avatar, Badge, Box, Menu, MenuItem} from '@material-ui/core'
 import {AccountBox, Group, ExitToApp} from '@material-ui/icons'
