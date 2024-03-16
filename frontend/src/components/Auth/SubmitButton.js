@@ -1,4 +1,4 @@
-import {Box, Button} from '@material-ui/core'
+import React, {Box, Button} from '@material-ui/core'
 
 
 const SubmitButton = ({text}) =>
