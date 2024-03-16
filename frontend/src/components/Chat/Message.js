@@ -1,4 +1,4 @@
-import {useContext} from 'react'
+import React, {useContext} from 'react'
 import {Box, Chip, Avatar, Typography} from '@material-ui/core'
 
 import UserContext from '../../contexts/UserContext'
