@@ -3,13 +3,14 @@ const cookie = require('cookie')
 const User = require('../models/User')
 const ApiError = require('./ApiError')
 const decodeToken = require('./decodeToken')
+const {ALLOWED_HOST} = require('./constants')
 
 let io
 module.exports = {
   init: server => {
     io = require('socket.io')(server, {
       cors: {
-        origin: 'http://laptop-m3aehvfp:3000',
+        origin: ALLOWED_HOST,
         credentials: true
       }
     })
@@ -18,8 +19,8 @@ module.exports = {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '')
       if (cookies.JWT) {
         const {_id} = decodeToken(cookies.JWT)
-        socket.user = await (await User.findOne({_id})).populate('chats')
-        socket.user.chats.forEach(chat => {
+        socket.user = await (await User.findOne({_id}))?.populate('chats')
+        socket.user?.chats.forEach(chat => {
           socket.join(chat.slug)
         })
       }

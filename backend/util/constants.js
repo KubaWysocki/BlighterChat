@@ -1,5 +1,7 @@
 exports.MONGO_DB_URI = `mongodb://${process.env.MONGO_DB_URI || 'localhost'}:27017/blighterChat`
 exports.MONGO_DB_TEST_URI = 'mongodb://localhost:27017/test_blighterChat'
+exports.ALLOWED_HOST = 'http://localhost:3000'
+// exports.ALLOWED_HOST = 'http://laptop-m3aehvfp:3000'
 
 exports.AUTH_EXPIRATION_TIME = String(1000 * 60 * 60 * 48)
 
