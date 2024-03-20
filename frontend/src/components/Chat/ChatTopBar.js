@@ -1,12 +1,14 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import {Box, Paper, IconButton, Typography, Badge} from '@material-ui/core'
+import {Box, Paper, IconButton, Typography, Badge, useMediaQuery} from '@material-ui/core'
 import {ArrowBackRounded, Settings} from '@material-ui/icons'
 
 import * as urls from '../../util/urls'
 
-const ChatTopBar = ({name, otherChatsNotif}) =>
-  <Box
+const ChatTopBar = ({name, otherChatsNotif}) => {
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('xs'))
+
+  return <Box
     component={Paper}
     square
     width={1}
@@ -17,7 +19,7 @@ const ChatTopBar = ({name, otherChatsNotif}) =>
   >
     <IconButton component={Link} to={urls.FEED}>
       <Badge
-        badgeContent={otherChatsNotif ? otherChatsNotif : 0}
+        badgeContent={isSmallScreen && otherChatsNotif ? otherChatsNotif : 0}
         color='secondary'
         anchorOrigin={{
           vertical: 'top',
@@ -31,5 +33,6 @@ const ChatTopBar = ({name, otherChatsNotif}) =>
       <Settings/>
     </IconButton>
   </Box>
+}
 
 export default ChatTopBar
