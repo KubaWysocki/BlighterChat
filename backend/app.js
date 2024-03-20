@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const dotenv = require('dotenv')
 
-const {MONGO_DB_URI} = require('./util/constants')
+const {MONGO_DB_URI, ALLOWED_HOST} = require('./util/constants')
 
 const io = require('./util/socket')
 
@@ -27,10 +27,12 @@ const app = express()
 app.use(bodyParser.json())
 app.use(cookieParser())
 
-app.use(cors({
-  origin: 'http://laptop-m3aehvfp:8000',
-  credentials: true
-}))
+if(process.env.NODE_ENV === 'development') {
+  app.use(cors({
+    origin: ALLOWED_HOST,
+    credentials: true
+  }))
+}
 
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')))
 
