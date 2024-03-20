@@ -44,8 +44,10 @@ const Message = ({message, active, setActiveId}) => {
       m={0.75}
       component={Chip}
       variant={message.user ? 'default' : 'outlined'}
+      maxWidth={0.8}
+      height="auto !important"
       label={
-        <Box p={1}>{message.content}</Box>
+        <Box whiteSpace="wrap" p={1}>{message.content}</Box>
       }
       avatar={!message.user || user.slug === message.user.slug
         ? null
