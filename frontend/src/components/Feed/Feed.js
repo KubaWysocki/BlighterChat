@@ -84,9 +84,11 @@ const Feed = ({activeChatSlugRef}) => {
             <ListItemAvatar>
               <Box component={Avatar} height={40} width={40}>{chatName[0]}</Box>
             </ListItemAvatar>
-            <Box>
+            <Box width={0.85}>
               <Typography variant='subtitle1'>{chatName}</Typography>
-              <Typography variant={wasRead ? 'caption' : 'subtitle2'}>{lastMessage.user && lastMessage.content}</Typography>
+              <Typography display='block' variant={wasRead ? 'caption' : 'subtitle2'} noWrap>
+                {lastMessage.user && lastMessage.content}
+              </Typography>
             </Box>
             <Box ml='auto'>
               <Badge badgeContent={notify?.length} color='secondary'/>
