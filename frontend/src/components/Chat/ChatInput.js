@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 import {Box, InputAdornment, TextField, Paper, Typography} from '@material-ui/core'
 import {CreateOutlined, SendRounded, Block} from '@material-ui/icons'
 
@@ -6,6 +6,7 @@ import axios from '../../util/axios'
 import * as api from '../../util/api'
 
 const ChatInput = ({chat, receiver, onSetChat}) => {
+  const inputRef = useRef()
   const [message, setMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
 
@@ -22,6 +23,7 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
           onSetChat(res.data)
           setMessage('')
           setIsSending(false)
+          inputRef.current.focus()
         })
     }
     else {
@@ -32,6 +34,7 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
         .then(() => {
           setMessage('')
           setIsSending(false)
+          inputRef.current.focus()
         })
         .catch(err => {
           if (err.response.status === 409) onSetChat({...chat, blocked: true}, false)
@@ -55,6 +58,7 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
       </Typography>
       : <>
         <TextField
+          inputRef={inputRef}
           fullWidth
           placeholder='Start typing a message'
           value={message}
