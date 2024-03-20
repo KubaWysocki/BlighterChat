@@ -10,8 +10,9 @@ import LoadMore from '../LoadMore/LoadMore'
 import useLoadMore from '../../Hooks/useLoadMore'
 import ScrollContainer from '../Generic/ScrollContainer'
 import {CreateChatIcon} from '../Icons/Icons'
+import socket from '../../util/socket'
 
-const Feed = () => {
+const Feed = ({activeChatSlugRef}) => {
   const [user] = useContext(UserContext)
   const [notifications] = useContext(NotificationsContext)
   const history = useHistory()
@@ -22,6 +23,21 @@ const Feed = () => {
   const handleClick = (slug, name) => {
     history.push(`${urls.CHAT}/${slug}`, {name})
   }
+
+  useEffect(() => {
+    const chatMessageCallback = (chat) => {
+      if (activeChatSlugRef.current !== chat.slug) return
+      setFeed((feed) =>
+        feed.map((c) =>
+          chat.slug === c.slug
+            ? {...chat, messages: [{...chat.messages[0], readList: [user]}]}
+            : c
+        )
+      )
+    }
+    socket.init().on('chat-message', chatMessageCallback)
+    return () => socket.init().off('chat-message', chatMessageCallback)
+  }, [activeChatSlugRef, user])
 
   useEffect(() => {
     if (!loading) {

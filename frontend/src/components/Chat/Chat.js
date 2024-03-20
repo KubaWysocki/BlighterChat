@@ -27,7 +27,7 @@ const Chat = ({activeChatSlugRef, setActiveChatSlug}) => {
   const [loadingMessages, handleLoadMoreMessages] = useLoadMore(`${api.MORE_MESSAGES}/${params.slug}`, setMessages, 1)
 
   const chatMessageCallback = useCallback(chat => {
-    if (activeChatSlugRef.current !== chat.slug) return //oposite case handled in /src/App.js
+    if (activeChatSlugRef.current !== chat.slug) return
     const newMessage = chat.messages[0]
     setMessages(messages => [newMessage, ...messages])
     if (newMessage.user.slug !== user.slug) {

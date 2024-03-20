@@ -26,7 +26,7 @@ function App() {
   const setUser = userContext[1]
 
   const activeChatSlugRef = useRef(null)
-  const setActiveChatSlug = useCallback(data => {
+  const setActiveChatSlug = useCallback((data) => {
     activeChatSlugRef.current = data
   }, [])
 
@@ -43,18 +43,16 @@ function App() {
   const handleInitIO = useCallback(() => {
     const io = socket.init()
 
-    io.on('chat-message', chat => {
-
-      if (activeChatSlugRef.current === chat.slug) return //oposite case handled in /src/components/Chat/Chat.js
+    io.on('chat-message', (chat) => {
+      if (activeChatSlugRef.current === chat.slug) return
 
       setNotifications((notifications) => {
         if (!notifications[chat.slug]) {
           return {
             ...notifications,
-            [chat.slug]: chat
+            [chat.slug]: chat,
           }
-        }
-        else {
+        } else {
           return {
             ...notifications,
             [chat.slug]: {
@@ -62,8 +60,8 @@ function App() {
               messages: [
                 ...chat.messages,
                 ...notifications[chat.slug].messages,
-              ]
-            }
+              ],
+            },
           }
         }
       })
@@ -86,23 +84,25 @@ function App() {
       history.push(`${urls.UNAUTHENTICATED}?known`)
       return setLoading(false)
     }
-    axios.get(api.AUTO_LOGIN)
-      .then(res => {
+    axios
+      .get(api.AUTO_LOGIN)
+      .then((res) => {
         setUser(res.data)
 
-        return axios.get(api.NOTIFICATIONS_COUNT)
-          .then(res => {
-            setNotifications(res.data)
+        return axios.get(api.NOTIFICATIONS_COUNT).then((res) => {
+          setNotifications(res.data)
 
-            handleInitIO()
+          handleInitIO()
 
-            setLoading(false)
+          setLoading(false)
 
-            if(history.location.pathname === urls.SLASH ||
-                history.location.pathname.includes(urls.UNAUTHENTICATED)) {
-              history.push(urls.FEED)
-            }
-          })
+          if (
+            history.location.pathname === urls.SLASH ||
+            history.location.pathname.includes(urls.UNAUTHENTICATED)
+          ) {
+            history.push(urls.FEED)
+          }
+        })
       })
       .catch(() => {
         history.push(`${urls.UNAUTHENTICATED}?known`)
@@ -110,65 +110,86 @@ function App() {
       })
   }, [history, setUser, setNotifications, handleInitIO])
 
-  if (loading) return <Spinner/>
+  if (loading) return <Spinner />
 
-  const auth = <Auth onInitIO={handleInitIO}/>
+  const auth = <Auth onInitIO={handleInitIO} />
 
-  const sharedElements = <>
-    <Route path={urls.PROFILE}>
-      <Profile/>
-    </Route>
-    <Route path={urls.FRIENDS}>
-      <Friends/>
-    </Route>
-    <Route path={urls.CHAT}>
-      <Chat activeChatSlugRef={activeChatSlugRef} setActiveChatSlug={setActiveChatSlug}/>
-    </Route>
-    <Route path={urls.NEW_CHAT}>
-      <NewChat/>
-    </Route>
-  </>
-
-  const mainView = isSmallScreen
-    ? <>
-      <Route path={urls.UNAUTHENTICATED}>
-        {auth}
+  const sharedElements =
+    <>
+      <Route path={urls.PROFILE}>
+        <Profile />
       </Route>
-      <Route render={({location}) =>
-        ![urls.UNAUTHENTICATED, urls.CHAT, urls.NEW_CHAT].some(url => location.pathname.includes(url)) &&
-          <>
-            <Navigation/>
-            {!location.pathname.includes(urls.FEED) && <ChatIcon notificationsNumber={Object.keys(notifications).length}/>}
-          </>
-      }/>
+      <Route path={urls.FRIENDS}>
+        <Friends />
+      </Route>
+      <Route path={urls.CHAT}>
+        <Chat
+          activeChatSlugRef={activeChatSlugRef}
+          setActiveChatSlug={setActiveChatSlug}
+        />
+      </Route>
+      <Route path={urls.NEW_CHAT}>
+        <NewChat />
+      </Route>
+    </>
+
+
+  const mainView = isSmallScreen ?
+    <>
+      <Route path={urls.UNAUTHENTICATED}>{auth}</Route>
+      <Route
+        render={({location}) =>
+          ![urls.UNAUTHENTICATED, urls.CHAT, urls.NEW_CHAT].some((url) =>
+            location.pathname.includes(url)
+          ) &&
+            <>
+              <Navigation />
+              {!location.pathname.includes(urls.FEED) &&
+                <ChatIcon
+                  notificationsNumber={Object.keys(notifications).length}
+                />
+              }
+            </>
+
+        }
+      />
       <Route path={urls.FEED}>
         <Box pt={6} height={1}>
-          <Feed/>
+          <Feed activeChatSlugRef={activeChatSlugRef} />
         </Box>
       </Route>
       {sharedElements}
     </>
-    : <>
-      <Route render={({location}) => !location.pathname.includes(urls.UNAUTHENTICATED)
-        ? <Box display='flex' position='relative' height={1}>
-          <Navigation/>
-          <Box display="flex" width={.3} height={1} pt={6}>
-            <Feed/>
-            <Divider orientation='vertical'/>
-          </Box>
-          <Box width={.7} pt={6} position="relative">
-            {sharedElements}
-          </Box>
-        </Box>
-        : auth
-      }/>
+    :
+    <>
+      <Route
+        render={({location}) =>
+          !location.pathname.includes(urls.UNAUTHENTICATED) ?
+            <Box display="flex" position="relative" height={1}>
+              <Navigation />
+              <Box display="flex" width={0.3} height={1} pt={6}>
+                <Feed activeChatSlugRef={activeChatSlugRef} />
+                <Divider orientation="vertical" />
+              </Box>
+              <Box width={0.7} pt={6} position="relative">
+                {sharedElements}
+              </Box>
+            </Box>
+            :
+            auth
+
+        }
+      />
     </>
+
 
   return (
     <Switch>
       <UserContext.Provider value={userContext}>
         <NotificationsContext.Provider value={notificationsContext}>
-          <FriendRequestsNumberContext.Provider value={friendRequestsNumberContext}>
+          <FriendRequestsNumberContext.Provider
+            value={friendRequestsNumberContext}
+          >
             {mainView}
           </FriendRequestsNumberContext.Provider>
         </NotificationsContext.Provider>
