@@ -12,7 +12,6 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
 
   const handleSendMessage = () => {
     if (!message || isSending) return
-    inputRef.current.focus()
     setIsSending(true)
 
     if (chat === true) {
@@ -24,7 +23,6 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
           onSetChat(res.data)
           setMessage('')
           setIsSending(false)
-          inputRef.current.focus()
         })
     }
     else {
@@ -35,7 +33,6 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
         .then(() => {
           setMessage('')
           setIsSending(false)
-          inputRef.current.focus()
         })
         .catch(err => {
           if (err.response.status === 409) onSetChat({...chat, blocked: true}, false)
@@ -72,11 +69,11 @@ const ChatInput = ({chat, receiver, onSetChat}) => {
               <InputAdornment position="start">
                 <CreateOutlined/>
               </InputAdornment>,
+            endAdornment: <Box pl={1} onClick={handleSendMessage}>
+              <SendRounded color={message.length && !isSending ? 'primary' : 'disabled'} fontSize='large'/>
+            </Box>
           }}
         />
-        <Box pl={1} onClick={handleSendMessage}>
-          <SendRounded color={message.length && !isSending ? 'primary' : 'disabled'} fontSize='large'/>
-        </Box>
       </>
     }
   </Box>
