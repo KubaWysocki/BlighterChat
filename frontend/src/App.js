@@ -124,6 +124,7 @@ function App() {
       </Route>
       <Route path={urls.CHAT}>
         <Chat
+          key={activeChatSlugRef.current}
           activeChatSlugRef={activeChatSlugRef}
           setActiveChatSlug={setActiveChatSlug}
         />
