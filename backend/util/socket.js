@@ -8,12 +8,12 @@ const {ALLOWED_HOST} = require('./constants')
 let io
 module.exports = {
   init: server => {
-    io = require('socket.io')(server, {
-      cors: {
-        origin: ALLOWED_HOST,
-        credentials: true
-      }
-    })
+    io = require('socket.io')(
+      server,
+      process.env.NODE_ENV === 'development'
+        ? {cors: {origin: ALLOWED_HOST, credentials: true}}
+        : {allowRequest: (req, callback) => callback(null, req.headers.origin === undefined)}
+    )
 
     io.on('connection', async socket => {
       const cookies = cookie.parse(socket.handshake.headers.cookie || '')
