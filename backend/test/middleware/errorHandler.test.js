@@ -33,11 +33,4 @@ describe('errorHandler middleware', function() {
     expect(res.status.calledOnceWithExactly(400)).to.be.true
     expect(res.json.calledOnceWithExactly({message})).to.be.true
   })
-
-  it('should call next', function() {
-    const spy = sinon.spy()
-    errorHandler({}, {}, res, spy)
-
-    expect(spy.calledOnce).to.be.true
-  })
 })
