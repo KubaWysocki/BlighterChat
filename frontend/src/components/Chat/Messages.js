@@ -8,7 +8,8 @@ const Messages = ({messages, loadingMessages, onLoadMore}) => {
   const [activeMessageId, setActiveMessageId] = useState(null)
 
   const handleInfiniteScroll = ({currentTarget}) => {
-    if (-currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight
+    const offset = 20
+    if (-currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight - offset
       && loadingMessages !== null
       && loadingMessages !== true) {
       onLoadMore()
