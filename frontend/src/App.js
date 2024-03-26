@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState, useRef} from 'react'
-import {Switch, Route, useHistory} from 'react-router-dom'
+import {Switch, Route, useHistory, Redirect} from 'react-router-dom'
 
 import axios from './util/axios'
 import * as urls from './util/urls'
@@ -191,6 +191,7 @@ function App() {
           <FriendRequestsNumberContext.Provider
             value={friendRequestsNumberContext}
           >
+            <Route exact path={urls.SLASH}><Redirect replace to={urls.FEED}/></Route>
             {mainView}
           </FriendRequestsNumberContext.Provider>
         </NotificationsContext.Provider>
