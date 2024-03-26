@@ -7,8 +7,8 @@ import Spinner from '../Spinner/Spinner'
 const Messages = ({messages, loadingMessages, onLoadMore}) => {
   const [activeMessageId, setActiveMessageId] = useState(null)
 
-  const handleInfiniteScroll = ({target}) => {
-    if (-target.scrollTop + target.clientHeight >= target.scrollHeight
+  const handleInfiniteScroll = ({currentTarget}) => {
+    if (-currentTarget.scrollTop + currentTarget.clientHeight >= currentTarget.scrollHeight
       && loadingMessages !== null
       && loadingMessages !== true) {
       onLoadMore()
